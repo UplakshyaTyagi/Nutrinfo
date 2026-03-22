@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.database import Base, engine
-from app.routers import scan, products, reviews, history
+from app.routers import scan, products, reviews, history, auth
 
 
 @asynccontextmanager
@@ -37,6 +37,7 @@ def create_app() -> FastAPI:
     app.include_router(products.router, prefix="/api/v1", tags=["Products"])
     app.include_router(reviews.router,  prefix="/api/v1", tags=["Reviews"])
     app.include_router(history.router,  prefix="/api/v1", tags=["History"])
+    app.include_router(auth.router,     prefix="/api/v1", tags=["Auth"])
 
     @app.get("/health", tags=["Health"])
     async def health_check():

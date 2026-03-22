@@ -14,6 +14,7 @@ class Settings(BaseSettings):
 
     # Firebase
     firebase_project_id: str = ""
+    GEMINI_API_KEY: str = ""
 
     # Open Food Facts
     open_food_facts_base_url: str = "https://world.openfoodfacts.org/api/v2"

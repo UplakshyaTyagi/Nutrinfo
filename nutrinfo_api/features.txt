@@ -1,0 +1,1 @@
+['sugars_100g', 'sat_fat_100g', 'sodium_mg_100g', 'fiber_100g', 'protein_100g', 'calories_100g']
