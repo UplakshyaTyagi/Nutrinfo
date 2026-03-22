@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nutrinfo | Digital Vitality</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Manrope & Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-secondary-fixed-variant": "#004c69",
+                "on-error-container": "#ffdad6",
+                "surface-bright": "#393939",
+                "surface": "#131313",
+                "secondary-fixed-dim": "#7ad0ff",
+                "on-error": "#690005",
+                "secondary-container": "#00bdfd",
+                "surface-container": "#201f1f",
+                "background": "#131313",
+                "on-secondary-container": "#004964",
+                "inverse-surface": "#e5e2e1",
+                "tertiary-fixed-dim": "#e6c26c",
+                "tertiary-fixed": "#ffdf95",
+                "primary-fixed": "#63ff93",
+                "tertiary-container": "#ffda81",
+                "outline": "#849584",
+                "error-container": "#93000a",
+                "error": "#ffb4ab",
+                "on-primary": "#003917",
+                "on-secondary": "#003549",
+                "primary-fixed-dim": "#00e471",
+                "surface-variant": "#353534",
+                "surface-container-high": "#2a2a2a",
+                "on-primary-fixed-variant": "#005224",
+                "on-primary-fixed": "#00210b",
+                "on-surface": "#e5e2e1",
+                "surface-dim": "#131313",
+                "secondary-fixed": "#c3e8ff",
+                "on-tertiary": "#3e2e00",
+                "on-background": "#e5e2e1",
+                "on-tertiary-container": "#795e0f",
+                "surface-container-highest": "#353534",
+                "on-surface-variant": "#b9cbb8",
+                "on-tertiary-fixed-variant": "#594400",
+                "on-secondary-fixed": "#001e2c",
+                "outline-variant": "#3b4b3c",
+                "tertiary": "#fffaf6",
+                "primary": "#f0ffed",
+                "secondary": "#8bd5ff",
+                "primary-container": "#00ff7f",
+                "on-tertiary-fixed": "#251a00",
+                "surface-container-low": "#1c1b1b",
+                "inverse-primary": "#006d33",
+                "surface-tint": "#00e471",
+                "inverse-on-surface": "#313030",
+                "surface-container-lowest": "#0e0e0e",
+                "on-primary-container": "#007134"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .splash-gradient {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #131313 100%);
+        }
+        .logo-glow {
+            filter: drop-shadow(0 0 25px rgba(0, 255, 127, 0.4));
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Splash Screen Container -->
+<main class="relative h-screen w-full flex flex-col items-center justify-center splash-gradient px-6">
+<!-- Center Content Group -->
+<div class="flex flex-col items-center justify-center text-center">
+<!-- Hero Logo -->
+<div class="relative mb-12 logo-glow">
+<div class="w-32 h-32 md:w-40 md:h-40 bg-surface-container-highest rounded-xl flex items-center justify-center relative overflow-hidden">
+<!-- Glassmorphism Overlay inside Logo -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/20 to-secondary-container/10 backdrop-blur-sm"></div>
+<!-- Iconic Symbol -->
+<div class="relative z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-7xl md:text-8xl text-primary-container" style="font-variation-settings: 'FILL' 1;">
+                            nutrition
+                        </span>
+<!-- Secondary overlap icon: camera aperture / leaf feel -->
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-8xl md:text-9xl text-secondary-container/30" style="font-variation-settings: 'wght' 100;">shutter_speed</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Brand Identity -->
+<div class="space-y-3">
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface">
+                    Nutrinfo
+                </h1>
+<p class="font-body text-sm md:text-base uppercase tracking-[0.3em] text-on-surface-variant font-medium opacity-80">
+                    Nutrition Made Simple
+                </p>
+</div>
+</div>
+<!-- Progress Footer Section -->
+<div class="absolute bottom-20 w-full max-w-xs md:max-w-md flex flex-col items-center space-y-6">
+<!-- Progress Bar Shell -->
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<!-- Progress Fill -->
+<div class="h-full w-[64%] bg-gradient-to-r from-primary-container to-secondary-container rounded-full shadow-[0_0_10px_rgba(0,255,127,0.4)]"></div>
+</div>
+<!-- Transactional Status Text -->
+<div class="flex flex-col items-center space-y-1">
+<div class="flex items-center gap-2 text-on-surface-variant font-label text-[10px] md:text-xs tracking-wider">
+<span class="opacity-40">Verifying secure connection...</span>
+<span class="text-primary-container font-bold">→</span>
+<span class="text-on-surface">Loading profile...</span>
+</div>
+<!-- Subtle Spinner/Indication -->
+<div class="pt-2">
+<span class="material-symbols-outlined text-primary-container text-sm animate-pulse">
+                        stream
+                    </span>
+</div>
+</div>
+</div>
+<!-- Decorative "Vitality" Accents (Bento-style background hints) -->
+<div class="absolute top-10 left-10 w-32 h-32 rounded-full bg-primary-container/5 blur-3xl"></div>
+<div class="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-secondary-container/5 blur-3xl"></div>
+</main>
+<!-- Hidden for Splash: TopAppBar & BottomNavBar as per logic 
+         but technically these are the "Anchors" if this were a main page.
+         Since this is a Focused Splash journey, we suppress them. -->
+</body></html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#93000a",
+              "on-secondary": "#003549",
+              "surface-container-highest": "#353534",
+              "surface-container-low": "#1c1b1b",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed": "#ffdf95",
+              "inverse-on-surface": "#313030",
+              "on-secondary-container": "#004964",
+              "on-primary-container": "#007134",
+              "on-primary": "#003917",
+              "error": "#ffb4ab",
+              "on-primary-fixed-variant": "#005224",
+              "surface-bright": "#393939",
+              "surface-container-high": "#2a2a2a",
+              "primary": "#f0ffed",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#004c69",
+              "on-surface-variant": "#b9cbb8",
+              "on-background": "#e5e2e1",
+              "on-tertiary-container": "#795e0f",
+              "surface": "#131313",
+              "surface-variant": "#353534",
+              "secondary-fixed-dim": "#7ad0ff",
+              "primary-fixed": "#63ff93",
+              "surface-container-lowest": "#0e0e0e",
+              "on-surface": "#e5e2e1",
+              "on-tertiary-fixed-variant": "#594400",
+              "secondary-container": "#00bdfd",
+              "inverse-primary": "#006d33",
+              "surface-dim": "#131313",
+              "surface-tint": "#00e471",
+              "primary-container": "#00ff7f",
+              "primary-fixed-dim": "#00e471",
+              "on-tertiary-fixed": "#251a00",
+              "inverse-surface": "#e5e2e1",
+              "secondary-fixed": "#c3e8ff",
+              "on-tertiary": "#3e2e00",
+              "tertiary-container": "#ffda81",
+              "tertiary-fixed-dim": "#e6c26c",
+              "outline": "#849584",
+              "on-secondary-fixed": "#001e2c",
+              "surface-container": "#201f1f",
+              "background": "#131313",
+              "secondary": "#8bd5ff",
+              "outline-variant": "#3b4b3c",
+              "on-primary-fixed": "#00210b",
+              "tertiary": "#fffaf6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .glass-panel {
+        background: rgba(19, 19, 19, 0.85);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+      }
+      .expert-border {
+        position: relative;
+      }
+      .expert-border::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1.5px;
+        background: linear-gradient(135deg, rgba(255, 223, 149, 0.5), rgba(0, 189, 253, 0.5));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
+    </style>
+<style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Background Content (Simulating Results Page) -->
+<div class="fixed inset-0 p-6 opacity-30 pointer-events-none">
+<header class="flex justify-between items-center w-full px-6 py-4 bg-transparent backdrop-blur-xl">
+<span class="text-xl font-black text-[#00FF7F] font-headline">Nutrinfo</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest"></div>
+</header>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="h-64 rounded-xl bg-surface-container-high"></div>
+<div class="h-40 rounded-xl bg-surface-container-high"></div>
+<div class="h-40 rounded-xl bg-surface-container-high"></div>
+<div class="h-64 rounded-xl bg-surface-container-high"></div>
+</div>
+</div>
+<!-- Bottom Sheet Modal Container -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"></div>
+<div class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center">
+<!-- The Modal Body -->
+<div class="w-full max-w-2xl h-[85vh] glass-panel rounded-t-[3rem] border-t border-white/10 shadow-2xl flex flex-col overflow-hidden">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-4 pb-1">
+<div class="w-10 h-1 rounded-full bg-white/20"></div>
+</div>
+<!-- Header Section -->
+<div class="px-8 py-6">
+<div class="flex justify-between items-center">
+<div>
+<span class="font-label text-[10px] font-extrabold tracking-[0.2em] text-secondary uppercase mb-1 block">Community Intelligence</span>
+<h1 class="font-headline text-2xl font-bold text-on-surface tracking-tight">Insights &amp; Reviews</h1>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-high/60 border border-white/5 rounded-full">
+<span class="material-symbols-outlined text-primary-container text-lg fill-1">stars</span>
+<span class="text-sm font-bold text-on-surface">4.8</span>
+</div>
+</div>
+</div>
+<!-- Scrollable List -->
+<div class="flex-1 overflow-y-auto px-6 space-y-4 pb-32">
+<!-- Expert Highlight Card -->
+<div class="expert-border rounded-2xl bg-gradient-to-br from-tertiary-fixed/10 to-secondary-container/5 p-5 relative">
+<div class="flex gap-4">
+<!-- Voting Component -->
+<div class="flex flex-col items-center gap-1 self-start pt-1 w-10">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined font-bold">expand_less</span>
+</button>
+<span class="text-xs font-black text-on-surface">1.2k</span>
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined font-bold">expand_more</span>
+</button>
+</div>
+<!-- Content Area -->
+<div class="flex-1">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shadow-lg">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">shield_person</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+<span class="material-symbols-outlined text-primary-container text-xs block fill-1">verified</span>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-bold text-on-surface text-base leading-tight">Verified Expert</h3>
+</div>
+<p class="text-xs text-on-surface-variant font-medium">Clinical Nutritionist • 12m ago</p>
+</div>
+</div>
+</div>
+<p class="text-sm text-on-surface/90 leading-relaxed font-medium mb-4">
+                            The glycemic response for this profile is exceptionally stable. Pairing the high fiber content with the specific fat ratios ensures a sustained energy release without insulin spikes. Highly recommended for metabolic health.
+                        </p>
+<div class="flex gap-2">
+<span class="px-2.5 py-1 rounded-lg bg-black/40 text-on-surface-variant text-[10px] font-bold border border-white/5 uppercase tracking-wide">Metabolic</span>
+<span class="px-2.5 py-1 rounded-lg bg-black/40 text-on-surface-variant text-[10px] font-bold border border-white/5 uppercase tracking-wide">Scientific</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Regular Community Card 1 -->
+<div class="rounded-2xl bg-surface-container-low/40 border border-white/5 p-5 transition-all hover:bg-surface-container-low/60">
+<div class="flex gap-4">
+<div class="flex flex-col items-center gap-1 self-start pt-1 w-10">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<span class="text-xs font-bold text-on-surface">842</span>
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-3">
+<img alt="Marcus.fit avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA78w-qhPYipVH6mHsR5xzEMupXSPx15DjivdERsQBwgizvXcROFZxeQZuM-uml8GlCIoeBZmydJOky92MN7aRddPXuzF9oiItKLse-dy02n8jV03mq3Foy0MKTVsQ_1DPEPPwvjajBtjzaqf-l1Gwt8v9zd61GD8HziVe-HtGTe_oyhXTZ-Kw9P1aGQG3aEUo0w-WXDD2Wt72YiZOClB-Zg4uzSYoyLY1miJUasixHe95Vh09LT1R38iA7RFe3uNMvvWEJpenOS_k"/>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium">Premium Member • 2h ago</p>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Tested this before my morning fasted cardio. Mental clarity was noticeable within 20 mins. Great alternative to high-stim pre-workouts.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Regular Community Card 2 -->
+<div class="rounded-2xl bg-surface-container-low/40 border border-white/5 p-5 transition-all hover:bg-surface-container-low/60">
+<div class="flex gap-4">
+<div class="flex flex-col items-center gap-1 self-start pt-1 w-10">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<span class="text-xs font-bold text-on-surface">329</span>
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container/20 border border-secondary-container/30 flex items-center justify-center text-secondary-container font-black text-xs">
+                                EL
+                            </div>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium">Community Member • 5h ago</p>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Decent flavor, but the texture is a bit gritty. Nutritionally it's perfect for my recovery window. 4/5 stars.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Regular Community Card 3 -->
+<div class="rounded-2xl bg-surface-container-low/40 border border-white/5 p-5 transition-all hover:bg-surface-container-low/60">
+<div class="flex gap-4">
+<div class="flex flex-col items-center gap-1 self-start pt-1 w-10">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+<span class="text-xs font-bold text-on-surface">156</span>
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-3">
+<img alt="Sarah Veg avatar" class="w-10 h-10 rounded-full object-cover border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfZZjgcwn7wIY7j4-eAeor53a99hk82lJkelouZUEcnBDDZuLZFCIwI72pkEbz7w_ralPVSqfRKS7jHBD_3zA6lC-Up0zlZitpL0ZDF0FGEZsXZ5M6ZbxBH1KUJjriOCzoi4_gLXCbbT9OXuLyWJBF5gLJKvoU2NyEgfKXhMT-FNr_lp3pU3N6ngA1_slOD8Nm-LrZ44S12YrtEMCuvifsLEnynaVxveUWoJWRLB5GCPmS4XWjspJ-tRy7Nld15wRvBH85SPd0lhE"/>
+<div>
+<p class="text-[11px] text-on-surface-variant font-medium">Premium Member • 8h ago</p>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                            Love that this is 100% transparent with the sourcing. It's rare to find such high-quality amino profiles in vegan options.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Bar (Floating appearance inside modal) -->
+<div class="absolute bottom-24 left-0 right-0 px-6 py-4 bg-gradient-to-t from-background via-background/90 to-transparent">
+<div class="flex items-center gap-3">
+<div class="flex-1 bg-surface-container-high border border-white/10 rounded-2xl px-5 py-3.5 flex items-center gap-3 shadow-xl">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">add_comment</span>
+<input class="bg-transparent border-none outline-none text-sm text-on-surface w-full focus:ring-0 placeholder:text-on-surface-variant/50 font-medium" placeholder="Write a review..." type="text"/>
+</div>
+<button class="w-12 h-12 rounded-2xl bg-primary-container text-on-primary-container flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-primary-container/20">
+<span class="material-symbols-outlined font-bold">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Persistent Bottom Nav Bar -->
+<nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-[60] flex justify-between items-center px-8 h-20 bg-[#1a1a1a]/80 backdrop-blur-3xl rounded-full border border-white/10 shadow-2xl">
+<button class="flex items-center justify-center p-2 text-on-surface-variant/60 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</button>
+<div class="relative -top-10">
+<div class="absolute inset-0 bg-[#00FF7F] blur-2xl opacity-40 rounded-full"></div>
+<button class="relative w-20 h-20 bg-[#00FF7F] rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(0,255,127,0.4)] hover:scale-105 transition-transform border-4 border-[#1a1a1a]">
+<span class="material-symbols-outlined text-black text-3xl font-bold">photo_camera</span>
+</button>
+</div>
+<button class="flex items-center justify-center p-2 text-on-surface-variant/60 hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-2xl">history</span>
+</button>
+</nav>
+</body></html>

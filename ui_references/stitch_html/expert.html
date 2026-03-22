@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalist Pro - Expert Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#353534",
+              "on-tertiary-container": "#795e0f",
+              "surface": "#131313",
+              "on-primary-fixed": "#00210b",
+              "primary": "#f0ffed",
+              "inverse-primary": "#006d33",
+              "surface-container": "#201f1f",
+              "surface-variant": "#353534",
+              "on-surface": "#e5e2e1",
+              "tertiary-fixed": "#ffdf95",
+              "surface-container-lowest": "#0e0e0e",
+              "surface-container-high": "#2a2a2a",
+              "background": "#131313",
+              "secondary-fixed-dim": "#7ad0ff",
+              "outline": "#849584",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e6c26c",
+              "on-primary-fixed-variant": "#005224",
+              "error-container": "#93000a",
+              "tertiary": "#fffaf6",
+              "on-secondary-fixed-variant": "#004c69",
+              "surface-bright": "#393939",
+              "on-secondary": "#003549",
+              "primary-fixed": "#63ff93",
+              "on-secondary-fixed": "#001e2c",
+              "inverse-on-surface": "#313030",
+              "secondary-container": "#00bdfd",
+              "on-background": "#e5e2e1",
+              "on-primary": "#003917",
+              "primary-fixed-dim": "#00e471",
+              "on-tertiary": "#3e2e00",
+              "inverse-surface": "#e5e2e1",
+              "secondary": "#8bd5ff",
+              "outline-variant": "#3b4b3c",
+              "on-error": "#690005",
+              "on-tertiary-fixed-variant": "#594400",
+              "on-secondary-container": "#004964",
+              "primary-container": "#00ff7f",
+              "surface-tint": "#00e471",
+              "on-tertiary-fixed": "#251a00",
+              "secondary-fixed": "#c3e8ff",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1c1b1b",
+              "surface-dim": "#131313",
+              "tertiary-container": "#ffda81",
+              "on-surface-variant": "#b9cbb8",
+              "on-primary-container": "#007134"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(42, 42, 42, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .cyan-glow {
+            box-shadow: 0 0 15px rgba(0, 189, 253, 0.15);
+        }
+        .cyan-glow-intense {
+            text-shadow: 0 0 20px rgba(0, 189, 253, 0.5);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neon-cyan-glow {
+            filter: drop-shadow(0 0 8px #00BFFF);
+            color: #00BFFF;
+        }
+        .neon-mint-glow {
+            box-shadow: 0 0 25px rgba(0, 255, 127, 0.6);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-zinc-950/80 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img alt="Expert Profile Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container-highest" data-alt="Professional medical expert portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPpuMXCQDtlm0VUqumzPBfpRs_6H-n1YZiLE-ymuQPEXLvqnDvlE1r3HLMdiTMLNMv-L7sxcN86wu974Qpjnhzbogfn96T_LHi2XqtiPxeF3a0Cs7e-Z8-zuuvu4zU0JjrafjnVBmY7QRmHuvwFu0eH0AtFiNCMQNa4l7tI_ZeBxfXhBLtyXxZaPKYYBxZBNf2Zm07rlmSfQbqohfrlO_NI01kTZCSMV1-VSXVtZYOqTQYEAVAb8RDuRKWx30Ss7hhKHwtPDE5U7Y"/>
+<div class="absolute -bottom-1 -right-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full p-0.5 shadow-lg">
+<span class="material-symbols-outlined text-[14px] block" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+</div>
+<div>
+<p class="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant">Verified Nutritionist</p>
+<h1 class="text-zinc-100 font-headline font-bold tracking-tight">Vitalist Pro</h1>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-emerald-400 font-bold hover:text-emerald-300 transition-colors" href="#">Dashboard</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors" href="#">Review</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors" href="#">Clients</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors" href="#">Analytics</a>
+</nav>
+<button class="text-emerald-400 active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="pt-28 pb-40 px-6 max-w-7xl mx-auto">
+<!-- Hero Header -->
+<section class="mb-12">
+<h2 class="text-on-surface font-headline font-extrabold text-[3.5rem] leading-tight tracking-tight mb-2">
+                Welcome back, Dr. Smith.
+            </h2>
+<p class="text-on-surface-variant font-body text-lg">Your expert insights are shaping 12 new health profiles today.</p>
+</section>
+<!-- Analytics Section (Bento 1x2) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+<!-- Card 1 -->
+<div class="glass-panel border border-secondary-container/10 rounded-xl p-8 cyan-glow flex flex-col justify-between min-h-[220px]">
+<div class="flex items-center justify-between mb-4">
+<span class="text-on-surface-variant font-label uppercase tracking-widest text-xs">Total Insights Read</span>
+<span class="material-symbols-outlined text-secondary" data-icon="visibility">visibility</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-secondary-container font-headline font-bold text-7xl cyan-glow-intense tracking-tighter">14.2k</span>
+<span class="text-secondary/60 font-body text-sm">+12% this week</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel border border-secondary-container/10 rounded-xl p-8 cyan-glow flex flex-col justify-between min-h-[220px]">
+<div class="flex items-center justify-between mb-4">
+<span class="text-on-surface-variant font-label uppercase tracking-widest text-xs">Community Upvotes</span>
+<span class="material-symbols-outlined text-secondary" data-icon="thumb_up">thumb_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-secondary-container font-headline font-bold text-7xl cyan-glow-intense tracking-tighter">890</span>
+<span class="text-secondary/60 font-body text-sm">Top 1% Contributor</span>
+</div>
+</div>
+</section>
+<!-- Bounty Feed -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline font-semibold text-2xl text-on-surface">Foods Needing Analysis</h3>
+<span class="text-on-surface-variant font-label text-xs tracking-widest uppercase">24 Pending Tasks</span>
+</div>
+<div class="space-y-4">
+<!-- List Row 1 -->
+<div class="bg-surface-container-low rounded-lg p-5 flex items-center justify-between shadow-[0_4px_40px_rgba(0,0,0,0.3)] hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img alt="Trader Joe's Cauliflower Gnocchi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Frozen cauliflower gnocchi product packaging" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDG1Xi4uK_OzCVr6FPfYLa38tsv9f-NeQuxXCEN6HDKzKi1Zg7k7T5CtZ4pEyBlMqU6meMBWxdYkNzwJ-AEnLJPIYOpJWwXnjVXoqaW71JS-oIxs6jzhrYSpWRbDwpD4dvqJ-QYPw7_7wo0AVpa2e6n0-pmX46Dt8fHR3eANkQQf2kjRBvd0vtfwlpIDoTeGB8NYHhbj2LDob1h7H5UYmEzNj3svY0p0iVvlTnbh-qQhXdTXfyaIxsRQySiTeaOqeYenWBI8PeleA"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Trader Joe's Cauliflower Gnocchi</h4>
+<p class="text-on-surface-variant text-sm">Category: Frozen / Plant-Based</p>
+</div>
+</div>
+<button class="bg-secondary-container text-on-secondary-container font-headline font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform active:scale-95 shadow-[0_0_20px_rgba(0,189,253,0.3)]">
+                        Add Insight
+                    </button>
+</div>
+<!-- List Row 2 -->
+<div class="bg-surface-container-low rounded-lg p-5 flex items-center justify-between shadow-[0_4px_40px_rgba(0,0,0,0.3)] hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img alt="Organic Greek Yogurt" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Premium organic greek yogurt tub" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb74r5wvRMrGasfb8LwM5c09Hees2pKgTqhDSh1wl-yS3x_X23cW-MJzHvEVvcxQ5xYE50fQMDCsw-qjcq5EuaQbt-falsePNFDL8PA0ltVmN45KN9SQaDTwvKkbI1MX68TM0xnHNpNGWVHLcX40w9dMfbdluzwaKBhsXjsXWLYO4HgEHSuM6L_Gs9tYFXpJ8xeSdvn8froVmlSVZoccVUNdcLfhWGiBe5HyZHuWIO4rI9zTHTozH-0aGPPG9YuQtQ7644_hOYJmA"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">A2 Organic Plain Greek Yogurt</h4>
+<p class="text-on-surface-variant text-sm">Category: Dairy / Probiotics</p>
+</div>
+</div>
+<button class="bg-secondary-container text-on-secondary-container font-headline font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform active:scale-95 shadow-[0_0_20px_rgba(0,189,253,0.3)]">
+                        Add Insight
+                    </button>
+</div>
+<!-- List Row 3 -->
+<div class="bg-surface-container-low rounded-lg p-5 flex items-center justify-between shadow-[0_4px_40px_rgba(0,0,0,0.3)] hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container-highest flex-shrink-0">
+<img alt="Kombucha Drink" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Craft glass bottle of kombucha" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF9zoommGx2RI9gHMiW7hvnjGHbniF3WUwD56wa1Ks_BXUkxW9Tac4H01e_xxfE3FLQeuC5Ndze9TVLm1jXAfQFuOUP17FdrWyoIZjfIkGpFSxFpQrS9eR-8XgHi9mK4mJtzctByE076P-Eocaom5Lf2dkyHBZS9N9NXxBKSU2JTiaC8Lg-VUnfH0QLQDOl14fztOwTB8fWya4b9idLQH7KRltRYsQ41VzDXP2JLzkhDoh50KWm1oBiY934hFwijRM8bFy_rxYjw8"/>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface text-lg">Ginger Lemon Probiotic Kombucha</h4>
+<p class="text-on-surface-variant text-sm">Category: Beverages / Fermented</p>
+</div>
+</div>
+<button class="bg-secondary-container text-on-secondary-container font-headline font-bold px-8 py-3 rounded-full hover:scale-105 transition-transform active:scale-95 shadow-[0_0_20px_rgba(0,189,253,0.3)]">
+                        Add Insight
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Navigation Bar -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-[100]">
+<nav class="relative flex items-center justify-between px-10 py-4 bg-zinc-900/60 backdrop-blur-3xl border border-white/10 rounded-full shadow-2xl">
+<!-- Home Icon -->
+<button class="p-2 transition-all duration-300">
+<span class="material-symbols-outlined text-3xl neon-cyan-glow" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+</button>
+<!-- Center Camera Button -->
+<div class="absolute left-1/2 -translate-x-1/2 -top-10">
+<button class="w-20 h-20 rounded-full bg-[#00FF7F] flex items-center justify-center neon-mint-glow hover:scale-110 active:scale-95 transition-transform shadow-[0_8px_32px_rgba(0,255,127,0.4)]">
+<span class="material-symbols-outlined text-black text-4xl" style="font-variation-settings: 'wght' 600;">photo_camera</span>
+</button>
+</div>
+<!-- History Icon -->
+<button class="p-2 transition-all duration-300">
+<span class="material-symbols-outlined text-3xl text-zinc-500">history</span>
+</button>
+</nav>
+</div>
+</body></html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Vision Scanner - Nutrinfo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error-container": "#93000a",
+              "on-secondary": "#003549",
+              "surface-container-highest": "#353534",
+              "surface-container-low": "#1c1b1b",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed": "#ffdf95",
+              "inverse-on-surface": "#313030",
+              "on-secondary-container": "#004964",
+              "on-primary-container": "#007134",
+              "on-primary": "#003917",
+              "error": "#ffb4ab",
+              "on-primary-fixed-variant": "#005224",
+              "surface-bright": "#393939",
+              "surface-container-high": "#2a2a2a",
+              "primary": "#f0ffed",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#004c69",
+              "on-surface-variant": "#b9cbb8",
+              "on-background": "#e5e2e1",
+              "on-tertiary-container": "#795e0f",
+              "surface": "#131313",
+              "surface-variant": "#353534",
+              "secondary-fixed-dim": "#7ad0ff",
+              "primary-fixed": "#63ff93",
+              "surface-container-lowest": "#0e0e0e",
+              "on-surface": "#e5e2e1",
+              "on-tertiary-fixed-variant": "#594400",
+              "secondary-container": "#00bdfd",
+              "inverse-primary": "#006d33",
+              "surface-dim": "#131313",
+              "surface-tint": "#00e471",
+              "primary-container": "#00ff7f",
+              "primary-fixed-dim": "#00e471",
+              "on-tertiary-fixed": "#251a00",
+              "inverse-surface": "#e5e2e1",
+              "secondary-fixed": "#c3e8ff",
+              "on-tertiary": "#3e2e00",
+              "tertiary-container": "#ffda81",
+              "tertiary-fixed-dim": "#e6c26c",
+              "outline": "#849584",
+              "on-secondary-fixed": "#001e2c",
+              "surface-container": "#201f1f",
+              "background": "#131313",
+              "secondary": "#8bd5ff",
+              "outline-variant": "#3b4b3c",
+              "on-primary-fixed": "#00210b",
+              "tertiary": "#fffaf6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .vignette-overlay {
+            background: radial-gradient(circle, transparent 30%, rgba(13, 13, 13, 0.8) 100%);
+        }
+        .ar-glow {
+            box-shadow: 0 0 40px rgba(0, 191, 255, 0.3), inset 0 0 30px rgba(0, 191, 255, 0.15);
+        }
+        .scan-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00BFFF, #00FF7F, #00BFFF, transparent);
+            top: 0%;
+            width: 100%;
+            position: absolute;
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .glass-morphism {
+            background: rgba(42, 42, 42, 0.4);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .shutter-gradient {
+            background: linear-gradient(135deg, #00FF7F 0%, #00e471 45%, #00BFFF 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body overflow-hidden h-screen w-full relative">
+<!-- Camera Viewfinder Background -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center" data-alt="Close up of a nutrition label on food packaging" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBh4ETGRmVwy_Qb5PNoLiYl6ahqNoyDiPlEM2toSseVjOqtX6oXSgZjyZ3vP-tThjaza0mq2qv5uC_fnwYTiDyhKETp5qUt-UtLOd5Hibjb17oAGcXoFSUDPEQtpr4ZwM5JAm41mAazM8-X-QNPpAljQmKxbxsI0eZWEdi9HQU-HckQFNP7TD4RJGv08TK-deqNZ_4UNJ74ChjHPrLapnMqsKW3yez3YGgV4oMb3NXaZaQNBMVoukpbOROxY9M132CvzDBa9_A88H8')"></div>
+<div class="absolute inset-0 vignette-overlay"></div>
+</div>
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50">
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full glass-morphism flex items-center justify-center transition-transform active:scale-90">
+<span class="material-symbols-outlined text-on-surface">close</span>
+</button>
+<span class="text-xl font-black text-[#00FF7F] font-headline tracking-tighter">Nutrinfo</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="glass-morphism text-[#00FF7F] px-4 py-1.5 rounded-full font-headline font-extrabold text-xs tracking-widest border-[#00FF7F]/20">
+            PRO
+        </button>
+<div class="w-10 h-10 rounded-full border-2 border-[#00FF7F] p-0.5 shadow-[0_0_10px_rgba(0,255,127,0.3)]">
+<img alt="Profile" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXGVrowUKg2nrwXrERB4UpdPyQAWhyDALoaGXP2MxiD_fUWRNaV5uLX6GO8TmB9QzVA91ZKcH4OnZEQQ9c8braCW8NQg1-UokZ8C7VW6rdTa_kwMoabP4Q6O8-HuuW85tU72XaKeY5n8KbdFjsNTvReMndYIbYVFTx6BFaYMarkktcltAS0OIu8skGPT4QZkOYF0fy4FYBV5j8Mt7u9a-Rl7OVeg9qHcLa5yCrF02zQvaDmcsT_XALA6LUUfentuXk_w7i2umd8uU"/>
+</div>
+</div>
+</header>
+<!-- Scanning Interface -->
+<main class="relative z-10 h-full w-full flex flex-col items-center justify-center pt-16 pb-32">
+<!-- AR Bounding Box (Centered in Viewport) -->
+<div class="relative w-[85vw] max-w-sm aspect-[4/5] border border-secondary/20 rounded-2xl ar-glow flex items-center justify-center">
+<!-- Corner Accents -->
+<div class="absolute -top-1 -left-1 w-14 h-14 border-t-4 border-l-4 border-secondary rounded-tl-2xl shadow-[0_0_15px_rgba(139,213,255,0.4)]"></div>
+<div class="absolute -top-1 -right-1 w-14 h-14 border-t-4 border-r-4 border-secondary rounded-tr-2xl shadow-[0_0_15px_rgba(139,213,255,0.4)]"></div>
+<div class="absolute -bottom-1 -left-1 w-14 h-14 border-b-4 border-l-4 border-secondary rounded-bl-2xl shadow-[0_0_15px_rgba(139,213,255,0.4)]"></div>
+<div class="absolute -bottom-1 -right-1 w-14 h-14 border-b-4 border-r-4 border-secondary rounded-br-2xl shadow-[0_0_15px_rgba(139,213,255,0.4)]"></div>
+<!-- Scanning Line -->
+<div class="scan-line"></div>
+<!-- Integrated Status Indicator -->
+<div class="absolute -top-16 left-1/2 -translate-x-1/2 w-full flex justify-center">
+<div class="flex items-center space-x-3 glass-morphism px-5 py-2.5 rounded-full border-[#00BFFF]/30">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<p class="text-on-surface font-headline font-bold text-xs uppercase tracking-[0.2em]">Analyzing label...</p>
+</div>
+</div>
+<!-- Focus Markers -->
+<div class="w-full h-full absolute flex items-center justify-center pointer-events-none">
+<div class="w-[80%] h-[1px] bg-secondary/10"></div>
+<div class="h-[80%] w-[1px] bg-secondary/10 absolute"></div>
+</div>
+</div>
+<!-- Manual Input Overlay -->
+<div class="mt-12 w-full px-8 max-w-sm">
+<div class="glass-morphism rounded-2xl p-4 flex items-center gap-4 border-white/10 shadow-2xl">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/60 flex-1 font-body text-sm" placeholder="Search for product..." type="text"/>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
+<div class="relative flex justify-around items-center h-20 bg-[#1c1b1b]/80 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
+<!-- Home Button -->
+<button class="flex items-center justify-center w-1/3">
+<span class="material-symbols-outlined text-on-surface-variant/50 text-3xl">grid_view</span>
+</button>
+<!-- Center Action Button -->
+<div class="absolute left-1/2 -translate-x-1/2 -top-10">
+<button class="flex items-center justify-center w-20 h-20 rounded-full bg-[#00FF7F] shadow-[0_0_30px_rgba(0,255,127,0.6)] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-black text-4xl font-bold">photo_camera</span>
+</button>
+</div>
+<!-- Spacer for center button -->
+<div class="w-1/3"></div>
+<!-- History Button -->
+<button class="flex items-center justify-center w-1/3">
+<span class="material-symbols-outlined text-on-surface-variant/50 text-3xl">schedule</span>
+</button>
+</div>
+</div>
+</body></html>

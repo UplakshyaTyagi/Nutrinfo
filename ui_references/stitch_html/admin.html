@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vitalist Pro Admin Moderation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@600;700;800&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#353534",
+              "on-tertiary-container": "#795e0f",
+              "surface": "#131313",
+              "on-primary-fixed": "#00210b",
+              "primary": "#f0ffed",
+              "inverse-primary": "#006d33",
+              "surface-container": "#201f1f",
+              "surface-variant": "#353534",
+              "on-surface": "#e5e2e1",
+              "tertiary-fixed": "#ffdf95",
+              "surface-container-lowest": "#0e0e0e",
+              "surface-container-high": "#2a2a2a",
+              "background": "#131313",
+              "secondary-fixed-dim": "#7ad0ff",
+              "outline": "#849584",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#e6c26c",
+              "on-primary-fixed-variant": "#005224",
+              "error-container": "#93000a",
+              "tertiary": "#fffaf6",
+              "on-secondary-fixed-variant": "#004c69",
+              "surface-bright": "#393939",
+              "on-secondary": "#003549",
+              "primary-fixed": "#63ff93",
+              "on-secondary-fixed": "#001e2c",
+              "inverse-on-surface": "#313030",
+              "secondary-container": "#00bdfd",
+              "on-background": "#e5e2e1",
+              "on-primary": "#003917",
+              "primary-fixed-dim": "#00e471",
+              "on-tertiary": "#3e2e00",
+              "inverse-surface": "#e5e2e1",
+              "secondary": "#8bd5ff",
+              "outline-variant": "#3b4b3c",
+              "on-error": "#690005",
+              "on-tertiary-fixed-variant": "#594400",
+              "on-secondary-container": "#004964",
+              "primary-container": "#00ff7f",
+              "surface-tint": "#00e471",
+              "on-tertiary-fixed": "#251a00",
+              "secondary-fixed": "#c3e8ff",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1c1b1b",
+              "surface-dim": "#131313",
+              "tertiary-container": "#ffda81",
+              "on-surface-variant": "#b9cbb8",
+              "on-primary-container": "#007134"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"],
+              "mono": ["JetBrains Mono"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .glass-card {
+        background: rgba(42, 42, 42, 0.4);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+      }
+      .nav-glass {
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+<style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden h-screen flex flex-col">
+<!-- System Status Header -->
+<header class="w-full py-2 px-6 flex justify-center bg-surface-container-lowest z-[70]">
+<div class="font-mono text-[10px] tracking-wider text-primary-container uppercase opacity-80">
+            GCP Server: Healthy | API Latency: 42ms | Queue: 124 Items
+        </div>
+</header>
+<!-- TopAppBar Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-zinc-950/80 backdrop-blur-2xl shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+<div class="flex items-center gap-4">
+<span class="text-emerald-400 font-manrope font-extrabold tracking-tighter text-xl">Vitalist Pro</span>
+<div class="hidden md:flex gap-6 ml-8">
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors font-semibold text-sm" href="#">Expert Panel</a>
+<a class="text-emerald-400 font-bold transition-colors text-sm" href="#">Moderation Queue</a>
+<a class="text-zinc-500 hover:text-emerald-300 transition-colors font-semibold text-sm" href="#">Task Feed</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant/20">
+<img alt="Expert Profile Avatar" class="w-full h-full object-cover" data-alt="Professional headshot of a male health expert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjB3-AapjQY7rxjgx5TiTF34VPek5gytlYEzJ5w8enxCkrwPDYfwuin9f-6Q1oNQ5VoD0aLrk7p3oUEFyXRWyp1E1qtF2aCRHT89Z-CvRRgvEdnBiKrMnPjo_mfuEIW-Z6sfOBSZtFBiSEQfqZyPn1yQByvWNunpNsNxU3_l3A0pWAZOQ18gxQF7e1ejU05hpI-3I21v899Y9BZ6ZBELymYClBR1zjpGYucuror-DRV17d89iICE0AcFQktl7dXRVgiNIxyLZhWHI"/>
+</div>
+<button class="text-zinc-100 hover:text-emerald-300 transition-colors p-2">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area: Moderation Console -->
+<main class="flex-grow flex flex-col items-center justify-center px-4 pt-20 pb-32 relative">
+<!-- Large Moderation Glassmorphism Card -->
+<div class="glass-card w-full max-w-5xl rounded-xl border border-outline-variant/15 p-12 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-12 relative overflow-hidden">
+<!-- User Identity Header -->
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-surface-container-low p-0.5 border border-primary-container/20">
+<img alt="User Avatar" class="w-full h-full object-cover rounded-full" data-alt="Portrait of a male fitness influencer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEm_hYbZ25jxl4yNK4_G4bUl4QtgnkziadmcRjfoUh5Ja8pG8KW5lHHmEhKEPX7_i7rQYipJrOilOm8gxVhQzMw-Rf17nDYHZeVUBjsLNAJdcs2nqG57p3SQDbCWxhl96KgHkG-vX5HhnEjlE2AogZaKf9oFbmlH6_ulZ9QsSk7pamk_Dbo1U9-7TUeevdgyKb2pj7clmAO0JuPJ4501DuM9u7m_nAJiDshSVw_bAI_0eoZErHfdI191nCNBhmJz93Mn06RownKhc"/>
+</div>
+<div>
+<h2 class="font-headline text-lg font-bold text-on-surface leading-tight">@JohnD_Fitness</h2>
+<p class="font-body text-xs text-on-surface-variant tracking-widest uppercase">Verified Contributor</p>
+</div>
+</div>
+<!-- Moderation Subject Text -->
+<div class="py-4">
+<blockquote class="font-headline text-3xl md:text-5xl font-extrabold text-on-surface leading-[1.15] tracking-tight max-w-3xl">
+                    "This gave me a massive sugar crash. The ingredient list hides high-fructose corn syrup."
+                </blockquote>
+</div>
+<!-- Metadata Tag -->
+<div class="mt-auto flex items-center">
+<div class="bg-surface-container-high px-6 py-2.5 rounded-full flex items-center gap-3 border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="link">link</span>
+<span class="font-body text-sm font-medium text-on-surface-variant">Linked to: <span class="text-secondary font-bold">Gatorade Blue</span></span>
+</div>
+</div>
+<!-- Background Texture (Subtle Glow) -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary-container/5 rounded-full blur-[120px]"></div>
+</div>
+<!-- Action Area: Massive Circular FABs -->
+<div class="mt-12 flex gap-12 z-20">
+<!-- REJECT ACTION (Neon Red) -->
+<button class="group w-24 h-24 md:w-28 md:h-28 rounded-full bg-error-container text-white flex items-center justify-center shadow-[0_20px_60px_-10px_rgba(147,0,10,0.6)] hover:scale-110 active:scale-95 transition-all duration-300 border-4 border-error/20">
+<span class="material-symbols-outlined text-4xl md:text-5xl font-bold" data-icon="close">close</span>
+</button>
+<!-- APPROVE ACTION (Electric Mint) -->
+<button class="group w-24 h-24 md:w-28 md:h-28 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-[0_20px_60px_-10px_rgba(0,255,127,0.4)] hover:scale-110 active:scale-95 transition-all duration-300 border-4 border-primary/20">
+<span class="material-symbols-outlined text-4xl md:text-5xl font-bold" data-icon="check" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+</div>
+</main>
+<!-- Navigation Drawer (Desktop Hidden Context) -->
+<aside class="hidden lg:flex fixed left-0 top-0 h-full z-[60] py-8 flex-col gap-4 bg-zinc-950 w-20 hover:w-80 transition-all duration-500 group border-r border-outline-variant/5">
+<div class="flex items-center gap-4 px-6 mb-12">
+<div class="w-8 h-8 flex-shrink-0 bg-emerald-500 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-zinc-950 font-bold" data-icon="psychology">psychology</span>
+</div>
+<span class="font-manrope font-bold text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">Expert Workspace</span>
+</div>
+<nav class="flex flex-col gap-2">
+<div class="flex items-center gap-4 mx-4 py-3 px-4 text-zinc-400 hover:text-emerald-400 hover:translate-x-2 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-manrope font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Admin Hub</span>
+</div>
+<div class="flex items-center gap-4 mx-4 py-3 px-4 bg-emerald-500 text-zinc-950 font-bold rounded-full">
+<span class="material-symbols-outlined" data-icon="fact_check" style="font-variation-settings: 'FILL' 1;">fact_check</span>
+<span class="font-manrope font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Moderation Queue</span>
+</div>
+<div class="flex items-center gap-4 mx-4 py-3 px-4 text-zinc-400 hover:text-emerald-400 hover:translate-x-2 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-manrope font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Task Feed</span>
+</div>
+<div class="mt-auto pt-8">
+<div class="flex items-center gap-4 mx-4 py-3 px-4 text-zinc-400 hover:text-emerald-400 hover:translate-x-2 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-manrope font-semibold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Settings</span>
+</div>
+</div>
+</nav>
+</aside>
+<!-- New Persistent 3-Icon Floating Navigation Bar -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-48px)] max-w-md h-20 nav-glass rounded-full border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-center justify-around px-8">
+<!-- Left: Home (Inactive) -->
+<button class="text-zinc-500 flex items-center justify-center p-2 transition-opacity active:opacity-60">
+<span class="material-symbols-outlined text-3xl" data-icon="grid_view">grid_view</span>
+</button>
+<!-- Center: Camera Button (Breaks out) -->
+<div class="relative -top-6">
+<button class="w-20 h-20 rounded-full bg-[#00FF7F] text-black flex items-center justify-center shadow-[0_0_30px_rgba(0,255,127,0.5),0_10px_20px_rgba(0,0,0,0.4)] hover:scale-105 active:scale-95 transition-all duration-300">
+<span class="material-symbols-outlined text-4xl" data-icon="photo_camera" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</button>
+</div>
+<!-- Right: History (Inactive) -->
+<button class="text-zinc-500 flex items-center justify-center p-2 transition-opacity active:opacity-60">
+<span class="material-symbols-outlined text-3xl" data-icon="history">history</span>
+</button>
+</div>
+</body></html>
