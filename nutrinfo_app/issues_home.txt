@@ -1,0 +1,9 @@
+Analyzing nutrinfo_app...                                       
+
+warning - The declaration '_PlaceholderScreen' isn't referenced - lib\core\router.dart:8:7 - unused_element
+  error - The function 'MainShell' isn't defined - lib\core\router.dart:33:16 - undefined_function
+  error - The name 'HomeScreen' isn't a class - lib\core\router.dart:40:50 - creation_with_non_type
+  error - The name 'HistoryScreen' isn't a class - lib\core\router.dart:48:50 - creation_with_non_type
+  error - The name 'ProfileScreen' isn't a class - lib\core\router.dart:56:50 - creation_with_non_type
+
+5 issues found. (ran in 4.0s)

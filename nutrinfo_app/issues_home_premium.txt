@@ -1,0 +1,6 @@
+Analyzing nutrinfo_app...                                       
+
+  error - Undefined name 'PhosphorIconsFill' - lib\features\home\home_screen.dart:421:33 - undefined_identifier
+  error - Undefined name 'PhosphorIconsFill' - lib\features\home\home_screen.dart:421:65 - undefined_identifier
+
+2 issues found. (ran in 3.4s)

@@ -38,7 +38,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         // TODO: Later add auth check from SharedPreferences/Providers
-        context.go('/onboarding');
+        context.go('/auth');
       }
     });
   }

@@ -1,0 +1,5 @@
+Analyzing nutrinfo_app...                                       
+
+  error - The named parameter 'titlePadding' isn't defined - lib\features\home\home_screen.dart:22:15 - undefined_named_parameter
+
+1 issue found. (ran in 3.2s)
