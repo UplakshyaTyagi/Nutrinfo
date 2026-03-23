@@ -8,6 +8,10 @@ class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
+  void _openScanner(BuildContext context) {
+    context.push('/scanner');
+  }
+
   void _onTap(int index) {
     navigationShell.goBranch(
       index,
@@ -123,9 +127,7 @@ class MainShell extends StatelessWidget {
                   Positioned(
                     top: -32,
                     child: GestureDetector(
-                      onTap: () {
-                        // Camera trigger
-                      },
+                      onTap: () => _openScanner(context),
                       child: Container(
                         width: 64,
                         height: 64,
