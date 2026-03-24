@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../../theme/app_theme.dart';
 import '../../core/widgets/shimmer_network_image.dart';
+import '../reviews/reviews_sheet.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
   const ProductDetailScreen({super.key});
@@ -123,7 +123,7 @@ class ProductDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 10),
 
                     // Community Reviews Button
-                    _buildCommunityReviewsButton(),
+                    _buildCommunityReviewsButton(context),
                   ],
                 ),
               ),
@@ -587,34 +587,37 @@ class ProductDetailScreen extends ConsumerWidget {
   }
 
   /// Community Reviews CTA button
-  Widget _buildCommunityReviewsButton() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(13), // white/5
-        borderRadius: BorderRadius.circular(9999),
-        border: Border.all(color: Colors.white.withAlpha(25), width: 1.0), // white/10
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            PhosphorIconsRegular.chatTeardrop,
-            color: Color(0xFF00FF7F),
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'Community Reviews ($_reviewCount)',
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: -0.3,
+  Widget _buildCommunityReviewsButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => showReviewsSheet(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(13), // white/5
+          borderRadius: BorderRadius.circular(9999),
+          border: Border.all(color: Colors.white.withAlpha(25), width: 1.0), // white/10
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              PhosphorIconsRegular.chatTeardrop,
+              color: Color(0xFF00FF7F),
+              size: 20,
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Text(
+              'Community Reviews ($_reviewCount)',
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

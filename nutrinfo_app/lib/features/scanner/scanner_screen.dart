@@ -5,8 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import '../../theme/app_theme.dart';
 import '../../core/widgets/shimmer_network_image.dart';
 
 class ScannerScreen extends ConsumerStatefulWidget {

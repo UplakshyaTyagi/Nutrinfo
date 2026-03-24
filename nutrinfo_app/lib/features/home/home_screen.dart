@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../theme/app_theme.dart';
 import '../../core/widgets/shimmer_network_image.dart';
@@ -20,32 +20,40 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 120, bottom: 120, left: 24.0, right: 24.0),
             children: [
               // Search Bar — glass-panel: bg white/3%, blur 24, border white/5%
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 24.0, sigmaY: 24.0),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(8), // 3% white
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withAlpha(13), width: 1.0), // 5% white
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.search, color: const Color(0xFFB9CBB8).withAlpha(153)), // on-surface-variant/60
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Search product, brand, ingredient...',
-                            style: TextStyle(
-                              color: const Color(0xFFB9CBB8).withAlpha(102), // on-surface-variant/40
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+              GestureDetector(
+                onTap: () {
+                  showSearch(
+                    context: context,
+                    delegate: _ProductSearchDelegate(),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 24.0, sigmaY: 24.0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(8), // 3% white
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withAlpha(13), width: 1.0), // 5% white
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search, color: const Color(0xFFB9CBB8).withAlpha(153)), // on-surface-variant/60
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Search product, brand, ingredient...',
+                              style: TextStyle(
+                                color: const Color(0xFFB9CBB8).withAlpha(102), // on-surface-variant/40
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -293,16 +301,19 @@ class HomeScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 16),
                               // Profile Avatar — Reference: border-outline-variant (#3b4b3c)
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: const Color(0xFF3B4B3C), width: 1.0),
-                                ),
-                                child: const ClipOval(
-                                  child: ShimmerNetworkImage(
-                                    imageUrl: "https://ui-avatars.com/api/?name=Alex&background=random&size=100",
+                              GestureDetector(
+                                onTap: () => context.push('/profile'),
+                                child: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: const Color(0xFF3B4B3C), width: 1.0),
+                                  ),
+                                  child: const ClipOval(
+                                    child: ShimmerNetworkImage(
+                                      imageUrl: "https://ui-avatars.com/api/?name=Alex&background=random&size=100",
+                                    ),
                                   ),
                                 ),
                               ),
@@ -431,6 +442,89 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Search delegate for product search — themed to match the app's dark UI
+class _ProductSearchDelegate extends SearchDelegate<String> {
+  _ProductSearchDelegate() : super(searchFieldLabel: 'Search product, brand, ingredient...');
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF131313),
+        foregroundColor: Color(0xFFE5E2E1),
+        elevation: 0,
+      ),
+      scaffoldBackgroundColor: const Color(0xFF131313),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: const Color(0xFFB9CBB8).withAlpha(102)),
+        border: InputBorder.none,
+      ),
+      textTheme: const TextTheme(
+        titleLarge: TextStyle(color: Color(0xFFE5E2E1), fontSize: 16),
+      ),
+    );
+  }
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      if (query.isNotEmpty)
+        IconButton(
+          icon: const Icon(Icons.clear, color: Color(0xFFB9CBB8)),
+          onPressed: () => query = '',
+        ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back, color: Color(0xFF00FF7F)),
+      onPressed: () => close(context, ''),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container(
+      color: const Color(0xFF131313),
+      child: Center(
+        child: Text(
+          'Results for "$query"',
+          style: const TextStyle(color: Color(0xFFB9CBB8), fontSize: 16),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = ['Doritos Nacho Cheese', 'Greek Yogurt', 'Almond Milk', 'Whole Grain Bread', 'Kombucha']
+        .where((s) => s.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return Container(
+      color: const Color(0xFF131313),
+      child: ListView.builder(
+        itemCount: suggestions.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: const Icon(PhosphorIconsRegular.magnifyingGlass, color: Color(0xFFB9CBB8), size: 18),
+            title: Text(
+              suggestions[index],
+              style: const TextStyle(color: Color(0xFFE5E2E1)),
+            ),
+            onTap: () {
+              query = suggestions[index];
+              showResults(context);
+            },
+          );
+        },
       ),
     );
   }

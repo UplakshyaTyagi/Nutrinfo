@@ -9,6 +9,7 @@ import '../features/history/history_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/scanner/scanner_screen.dart';
 import '../features/product_detail/product_detail_screen.dart';
+import '../features/expert/expert_dashboard_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
@@ -39,6 +40,12 @@ final goRouter = GoRouter(
       path: '/product-detail',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const ProductDetailScreen(),
+    ),
+    // Expert dashboard — full-screen overlay
+    GoRoute(
+      path: '/expert',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ExpertDashboardScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
