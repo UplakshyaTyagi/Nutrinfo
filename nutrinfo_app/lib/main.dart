@@ -16,10 +16,11 @@ class NutrinfoApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
     return MaterialApp.router(
       title: 'Nutrinfo',
       theme: AppTheme.darkTheme,
-      routerConfig: goRouter,
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
     );
   }

@@ -9,7 +9,8 @@ import '../../core/widgets/shimmer_network_image.dart';
 import '../reviews/reviews_sheet.dart';
 
 class ProductDetailScreen extends ConsumerWidget {
-  const ProductDetailScreen({super.key});
+  final String productId;
+  const ProductDetailScreen({super.key, required this.productId});
 
   // Demo data matching the reference
   static const _productName = 'Doritos Nacho Cheese';

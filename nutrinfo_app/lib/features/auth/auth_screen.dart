@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
+import '../../providers/auth_provider.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -13,22 +15,84 @@ class AuthScreen extends ConsumerStatefulWidget {
 
 class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLogin = true;
-  bool _obscurePassword = true;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  bool _isLoading = false;
+  String? _errorMessage;
 
   void _toggleAuthMode() {
     setState(() {
       _isLogin = !_isLogin;
+      _errorMessage = null;
     });
   }
+
+  /// Auth0 Universal Login — opens the Auth0 login page in a browser/web view.
+  /// For "Sign Up" mode, sets the `screen_hint` parameter to show registration.
+  Future<void> _handleAuth0Login() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+
+    try {
+      final auth0 = ref.read(auth0Provider);
+      final webAuth = kIsWeb
+          ? auth0.webAuthentication()
+          : auth0.webAuthentication(scheme: 'com.nutrinfo.app');
+      final creds = await webAuth.login(
+        scopes: {'openid', 'profile', 'email', 'offline_access'},
+        parameters: _isLogin ? {} : {'screen_hint': 'signup'},
+      );
+
+      // Store credentials in provider
+      ref.read(auth0CredentialsProvider.notifier).setCredentials(creds);
+
+      // Sync with backend
+      ref.invalidate(currentUserProvider);
+      if (mounted) context.go('/onboarding');
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('CANCELLED') || msg.contains('user cancelled')) {
+        // User dismissed the login — not an error
+      } else {
+        debugPrint('Auth0 Login Error: $e');
+        setState(() => _errorMessage = 'Auth failed: $msg');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// Auth0 login with Google connection hint — opens directly to Google sign-in.
+  Future<void> _handleGoogleSignIn() async {
+    setState(() { _isLoading = true; _errorMessage = null; });
+
+    try {
+      final auth0 = ref.read(auth0Provider);
+      final webAuth = kIsWeb
+          ? auth0.webAuthentication()
+          : auth0.webAuthentication(scheme: 'com.nutrinfo.app');
+      final creds = await webAuth.login(
+        scopes: {'openid', 'profile', 'email', 'offline_access'},
+        parameters: {'connection': 'google-oauth2'},
+      );
+
+      // Store credentials in provider
+      ref.read(auth0CredentialsProvider.notifier).setCredentials(creds);
+
+      // Sync with backend
+      ref.invalidate(currentUserProvider);
+      if (mounted) context.go('/onboarding');
+    } catch (e) {
+      final msg = e.toString();
+      if (msg.contains('CANCELLED') || msg.contains('user cancelled')) {
+        // User dismissed — not an error
+      } else {
+        debugPrint('Google Auth Error: $e');
+        setState(() => _errorMessage = 'Google failed: $msg');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,26 +175,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Email Field
-                              _buildTextField(
-                                controller: _emailController,
-                                icon: Icons.email_outlined,
-                                hintText: 'Email Address',
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                              const SizedBox(height: 16),
-                              
-                              // Password Field
-                              _buildTextField(
-                                controller: _passwordController,
-                                icon: Icons.lock_outline,
-                                hintText: 'Password',
-                                obscureText: _obscurePassword,
-                                isPassword: true,
-                              ),
-                              const SizedBox(height: 32),
-
-                              // Submit Button
+                              // Sign In / Sign Up Button — Opens Auth0 Universal Login
                               Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(16),
@@ -148,11 +193,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                   ]
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    // TODO: Implement Firebase Auth
-                                    // For now, bypass to onboarding
-                                    context.go('/onboarding');
-                                  },
+                                  onPressed: _isLoading ? null : _handleAuth0Login,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.transparent,
                                     shadowColor: Colors.transparent,
@@ -161,17 +202,33 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                   ),
-                                  child: Text(
-                                    _isLogin ? 'Sign In' : 'Sign Up',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.background, // Dark text on bright button
-                                      letterSpacing: 1.0,
-                                    ),
-                                  ),
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          width: 20, height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2, color: AppTheme.background),
+                                        )
+                                      : Text(
+                                          _isLogin ? 'Sign In' : 'Sign Up',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.background,
+                                            letterSpacing: 1.0,
+                                          ),
+                                        ),
                                 ),
                               ),
+                              
+                              // Error message
+                              if (_errorMessage != null) ...[
+                                const SizedBox(height: 12),
+                                Text(
+                                  _errorMessage!,
+                                  style: const TextStyle(color: Color(0xFFFF5252), fontSize: 13),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                               
                               const SizedBox(height: 24),
                               
@@ -190,14 +247,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                               
                               // Google Button (Glassmorphic)
                               OutlinedButton.icon(
-                                onPressed: () {
-                                  // TODO: Google Sign-in flow
-                                  context.go('/onboarding');
-                                },
+                                onPressed: _isLoading ? null : _handleGoogleSignIn,
                                 icon: const Icon(Icons.g_mobiledata, color: Colors.white, size: 28),
-                                label: Text(
+                                label: const Text(
                                   'Continue with Google',
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
                                 style: OutlinedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -222,7 +276,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         _isLogin 
                           ? "Don't have an account? Sign Up" 
                           : "Already have an account? Sign In",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppTheme.neonMint,
                           fontWeight: FontWeight.w600,
                         ),
@@ -234,50 +288,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required IconData icon,
-    required String hintText,
-    bool obscureText = false,
-    bool isPassword = false,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(color: Colors.white.withAlpha(100)),
-        prefixIcon: Icon(icon, color: AppTheme.neonMint.withAlpha(150)),
-        suffixIcon: isPassword
-            ? IconButton(
-                icon: Icon(
-                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.white.withAlpha(100),
-                ),
-                onPressed: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              )
-            : null,
-        filled: true,
-        fillColor: Colors.black.withAlpha(50),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.white.withAlpha(30)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppTheme.cyanAccent),
-        ),
       ),
     );
   }

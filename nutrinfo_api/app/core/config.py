@@ -12,8 +12,9 @@ class Settings(BaseSettings):
     # Google Cloud Vision
     google_application_credentials: str = ""
 
-    # Firebase
-    firebase_project_id: str = ""
+    # Auth0
+    auth0_domain: str = "dev-q61utsgndptw7t83.us.auth0.com"
+    auth0_api_audience: str = "https://dev-q61utsgndptw7t83.us.auth0.com/api/v2/"
     GEMINI_API_KEY: str = ""
 
     # Open Food Facts

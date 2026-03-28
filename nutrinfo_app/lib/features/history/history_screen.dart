@@ -223,6 +223,7 @@ class HistoryScreen extends ConsumerWidget {
     required double score,
     required String imageUrl,
     required bool isFaded,
+    VoidCallback? onTap,
   }) {
     // Score coloring rules:
     // < 5.0 → error (red glow)
@@ -263,14 +264,16 @@ class HistoryScreen extends ConsumerWidget {
       ];
     }
 
-    return ClipRRect(
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A).withAlpha(102), // glass-card: rgba(42,42,42,0.4)
+            color: const Color(0xFF2A2A2A).withAlpha(102),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -362,6 +365,7 @@ class HistoryScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

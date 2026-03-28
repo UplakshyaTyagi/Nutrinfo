@@ -19,6 +19,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
   late final AnimationController _scanLineController;
   late final AnimationController _pulseController;
   late final MobileScannerController _cameraController;
+  bool _hasScanned = false;
 
   @override
   void initState() {
@@ -47,6 +48,21 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     super.dispose();
   }
 
+  void _onBarcodeDetected(BarcodeCapture capture) {
+    if (_hasScanned) return;
+    final barcodes = capture.barcodes;
+    if (barcodes.isEmpty) return;
+
+    final code = barcodes.first.rawValue;
+    if (code == null || code.isEmpty) return;
+
+    _hasScanned = true;
+    _cameraController.stop();
+
+    // Navigate to product detail with the scanned barcode as product ID
+    context.push('/product-detail/$code');
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -61,9 +77,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
           Positioned.fill(
             child: MobileScanner(
               controller: _cameraController,
-              onDetect: (capture) {
-                // Barcode detection handler — will be wired to API later
-              },
+              onDetect: _onBarcodeDetected,
             ),
           ),
 
