@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.database import get_db
-from app.core.security import verify_firebase_token
+from app.core.security import get_current_user_uid
 from app.models.db_models import Review, User, Product
 from app.schemas.pydantic_schemas import ReviewResponse
 
@@ -21,7 +21,7 @@ class ReviewCreate(BaseModel):
 async def create_review(
     review_in: ReviewCreate,
     db: AsyncSession = Depends(get_db),
-    uid: str = Depends(verify_firebase_token)
+    uid: str = Depends(get_current_user_uid)
 ):
     """Allow users to rate and review food products."""
     user_stmt = select(User).where(User.firebase_uid == uid)

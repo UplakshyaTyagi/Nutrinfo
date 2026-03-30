@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.database import get_db
-from app.core.security import verify_firebase_token
+from app.core.security import get_current_user_uid
 from app.models.db_models import User
 from app.schemas.pydantic_schemas import AuthSyncResponse
 
@@ -15,17 +15,18 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 class UserSync(BaseModel):
     display_name: str | None = None
     email: str | None = None
+    picture_url: str | None = None
     dietary_focus: str = "None"
 
 @router.post("/sync", response_model=AuthSyncResponse)
 async def sync_user(
     user_data: UserSync,
     db: AsyncSession = Depends(get_db),
-    uid: str = Depends(verify_firebase_token)
+    uid: str = Depends(get_current_user_uid)
 ):
     """
-    Syncs the Firebase User with the SQLite local database.
-    Called by the Flutter app right after Firebase Login or Onboarding.
+    Syncs the Auth0 User with the SQLite local database.
+    Called by the Flutter app right after Auth0 Login or Onboarding.
     """
     stmt = select(User).where(User.firebase_uid == uid)
     res = await db.execute(stmt)
@@ -39,6 +40,8 @@ async def sync_user(
             user.display_name = user_data.display_name
         if user_data.email:
             user.email = user_data.email
+        if user_data.picture_url:
+            user.picture_url = user_data.picture_url
             
         await db.commit()
         await db.refresh(user)
@@ -50,7 +53,9 @@ async def sync_user(
         firebase_uid=uid,
         display_name=user_data.display_name or "Anonymous",
         email=user_data.email or "",
+        picture_url=user_data.picture_url or "",
         dietary_focus=user_data.dietary_focus,
+        is_pro=False,
         created_at=datetime.now(timezone.utc)
     )
     

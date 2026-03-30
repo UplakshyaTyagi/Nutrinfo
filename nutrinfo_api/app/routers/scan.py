@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.core.database import get_db
-from app.core.security import verify_firebase_token
+from app.core.security import get_current_user_uid
 from app.models.db_models import Product, ScanHistory, User
 from app.services.vision_service import analyze_product_image
 from app.services.off_service import search_off_by_name
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/scan", tags=["Scanning"])
 async def scan_product(
     image: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    uid: str = Depends(verify_firebase_token)
+    uid: str = Depends(get_current_user_uid)
 ):
     """
     Hybrid Scan Workflow:

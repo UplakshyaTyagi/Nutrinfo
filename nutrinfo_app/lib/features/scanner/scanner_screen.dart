@@ -1,11 +1,12 @@
-import 'dart:math';
 import 'dart:ui';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../core/widgets/shimmer_network_image.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import '../../providers/auth_provider.dart';
 
 class ScannerScreen extends ConsumerStatefulWidget {
   const ScannerScreen({super.key});
@@ -14,405 +15,475 @@ class ScannerScreen extends ConsumerStatefulWidget {
   ConsumerState<ScannerScreen> createState() => _ScannerScreenState();
 }
 
-class _ScannerScreenState extends ConsumerState<ScannerScreen>
-    with TickerProviderStateMixin {
-  late final AnimationController _scanLineController;
-  late final AnimationController _pulseController;
-  late final MobileScannerController _cameraController;
-  bool _hasScanned = false;
+class _ScannerScreenState extends ConsumerState<ScannerScreen> {
+  CameraController? _cameraController;
+  bool _isInitialized = false;
+  bool _isProcessing = false;
+  String _statusMessage = 'Point camera at a product label';
+  List<Map<String, dynamic>> _foundProducts = [];
+  bool _showResults = false;
+
+  final TextRecognizer _textRecognizer =
+      TextRecognizer(script: TextRecognitionScript.latin);
 
   @override
   void initState() {
     super.initState();
-    _scanLineController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
+    _initCamera();
+  }
 
-    _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    )..repeat();
+  Future<void> _initCamera() async {
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        setState(() => _statusMessage = 'No camera found');
+        return;
+      }
 
-    _cameraController = MobileScannerController(
-      detectionSpeed: DetectionSpeed.normal,
-      facing: CameraFacing.back,
-    );
+      _cameraController = CameraController(
+        cameras.first,
+        ResolutionPreset.medium,
+        enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.nv21,
+      );
+
+      await _cameraController!.initialize();
+      if (mounted) {
+        setState(() => _isInitialized = true);
+      }
+    } catch (e) {
+      setState(() => _statusMessage = 'Camera error: $e');
+    }
   }
 
   @override
   void dispose() {
-    _scanLineController.dispose();
-    _pulseController.dispose();
-    _cameraController.dispose();
+    _cameraController?.dispose();
+    _textRecognizer.close();
     super.dispose();
   }
 
-  void _onBarcodeDetected(BarcodeCapture capture) {
-    if (_hasScanned) return;
-    final barcodes = capture.barcodes;
-    if (barcodes.isEmpty) return;
+  Future<void> _captureAndRecognize() async {
+    if (_cameraController == null || _isProcessing) return;
 
-    final code = barcodes.first.rawValue;
-    if (code == null || code.isEmpty) return;
+    setState(() {
+      _isProcessing = true;
+      _statusMessage = 'Reading product label...';
+    });
 
-    _hasScanned = true;
-    _cameraController.stop();
+    try {
+      final image = await _cameraController!.takePicture();
+      final inputImage = InputImage.fromFilePath(image.path);
+      final recognizedText = await _textRecognizer.processImage(inputImage);
 
-    // Navigate to product detail with the scanned barcode as product ID
-    context.push('/product-detail/$code');
+      final fullText = recognizedText.text.trim();
+      if (fullText.isEmpty) {
+        setState(() {
+          _isProcessing = false;
+          _statusMessage = 'No text found. Try again.';
+        });
+        return;
+      }
+
+      // Extract the most prominent text (first few lines, likely the product name)
+      final lines = recognizedText.blocks
+          .expand((block) => block.lines)
+          .map((line) => line.text.trim())
+          .where((line) => line.length > 2)
+          .toList();
+
+      if (lines.isEmpty) {
+        setState(() {
+          _isProcessing = false;
+          _statusMessage = 'No readable text. Try again.';
+        });
+        return;
+      }
+
+      // Use first 2-3 lines as the search query (usually the product name)
+      final searchQuery = lines.take(3).join(' ');
+
+      setState(() {
+        _statusMessage = 'Searching: "${lines.first}"...';
+      });
+
+      // Query backend
+      final api = ref.read(apiClientProvider);
+      final result = await api.scanByName(searchQuery);
+
+      if (result['found'] == true && result['products'] != null) {
+        final products =
+            (result['products'] as List).cast<Map<String, dynamic>>();
+        setState(() {
+          _foundProducts = products;
+          _showResults = true;
+          _isProcessing = false;
+        });
+      } else {
+        setState(() {
+          _isProcessing = false;
+          _statusMessage =
+              result['message'] ?? 'Product nutrition info has not been updated yet.';
+          _showResults = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isProcessing = false;
+        _statusMessage = 'Error: $e';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final boxWidth = screenWidth * 0.85;
-    final boxHeight = boxWidth * 1.25; // aspect-ratio 4:5
-
     return Scaffold(
-      backgroundColor: const Color(0xFF131313),
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. Camera Viewfinder Background
-          Positioned.fill(
-            child: MobileScanner(
-              controller: _cameraController,
-              onDetect: _onBarcodeDetected,
+          // Camera preview
+          if (_isInitialized && _cameraController != null)
+            Positioned.fill(
+              child: ClipRect(
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: _cameraController!.value.previewSize?.height ?? 1,
+                    height: _cameraController!.value.previewSize?.width ?? 1,
+                    child: CameraPreview(_cameraController!),
+                  ),
+                ),
+              ),
             ),
-          ),
 
-          // 2. Vignette Overlay — radial-gradient(circle, transparent 30%, rgba(13,13,13,0.8) 100%)
+          // Dark overlay gradient
           Positioned.fill(
-            child: DecoratedBox(
+            child: Container(
               decoration: BoxDecoration(
-                gradient: RadialGradient(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                   colors: [
+                    Colors.black.withAlpha(180),
                     Colors.transparent,
-                    const Color(0xFF0D0D0D).withAlpha(204), // 80%
+                    Colors.transparent,
+                    Colors.black.withAlpha(220),
                   ],
-                  stops: const [0.3, 1.0],
+                  stops: const [0.0, 0.2, 0.6, 1.0],
                 ),
               ),
             ),
           ),
 
-          // 3. Top Header Bar
+          // Scan frame overlay
+          if (!_showResults)
+            Center(
+              child: Container(
+                width: 280,
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: const Color(0xFF00FF7F).withAlpha(150),
+                    width: 2,
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    // Corner accents
+                    ..._buildCornerAccents(),
+                    // Center text
+                    Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            _isProcessing
+                                ? PhosphorIconsFill.circleNotch
+                                : PhosphorIconsFill.textT,
+                            color: const Color(0xFF00FF7F),
+                            size: 36,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _isProcessing ? 'Analyzing...' : 'Product Label',
+                            style: GoogleFonts.manrope(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF00FF7F),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          // Top bar
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: SafeArea(
-              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Left: Close button + Nutrinfo branding
-                    Row(
-                      children: [
-                        // Close button — glass-morphism: bg rgba(42,42,42,0.4), blur 16px, border white/10%
-                        GestureDetector(
-                          onTap: () => context.pop(),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(9999),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF2A2A2A).withAlpha(102), // rgba(42,42,42,0.4)
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white.withAlpha(25), // white/10%
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Color(0xFFE5E2E1),
-                                  size: 22,
-                                ),
-                              ),
-                            ),
-                          ),
+                    GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(120),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        const SizedBox(width: 12),
-                        // Nutrinfo branding
-                        Text(
-                          'Nutrinfo',
-                          style: GoogleFonts.manrope(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            color: const Color(0xFF00FF7F),
-                            letterSpacing: -0.5, // tracking-tighter
-                          ),
-                        ),
-                      ],
+                        child: const Icon(Icons.arrow_back,
+                            color: Colors.white, size: 20),
+                      ),
                     ),
-                    // Right: PRO badge + Profile avatar
-                    Row(
-                      children: [
-                        // PRO pill — glass-morphism with mint text
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(9999),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2A2A2A).withAlpha(102),
-                                borderRadius: BorderRadius.circular(9999),
-                                border: Border.all(
-                                  color: const Color(0xFF00FF7F).withAlpha(51), // #00FF7F/20
-                                  width: 1.0,
-                                ),
-                              ),
-                              child: Text(
-                                'PRO',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  color: const Color(0xFF00FF7F),
-                                  letterSpacing: 2.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        // Profile avatar — 40x40, border-2 #00FF7F, shadow glow
-                        Container(
-                          width: 40,
-                          height: 40,
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF00FF7F),
-                              width: 2.0,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF00FF7F).withAlpha(77), // rgba(0,255,127,0.3)
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                          child: const ClipOval(
-                            child: ShimmerNetworkImage(
-                              imageUrl: 'https://ui-avatars.com/api/?name=Alex&background=random&size=100',
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      'SCAN PRODUCT',
+                      style: GoogleFonts.manrope(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 2.0,
+                      ),
                     ),
+                    const SizedBox(width: 40),
                   ],
                 ),
               ),
             ),
           ),
 
-          // 4. Center: AR Bounding Box + Status Pill + Search Bar
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Status Pill — "ANALYZING LABEL..."
-                _buildStatusPill(),
-                const SizedBox(height: 16),
-
-                // AR Bounding Box
-                SizedBox(
-                  width: boxWidth,
-                  height: boxHeight,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Main container with AR glow
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: const Color(0xFF8BD5FF).withAlpha(51), // secondary/20
-                              width: 1.0,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF00BFFF).withAlpha(77), // rgba(0,191,255,0.3)
-                                blurRadius: 40,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Inner glow effect
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF00BFFF).withAlpha(38), // inset rgba(0,191,255,0.15)
-                                blurRadius: 30,
-                                blurStyle: BlurStyle.inner,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      // Crosshair lines
-                      Center(
-                        child: SizedBox(
-                          width: boxWidth * 0.8,
-                          height: 1,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF8BD5FF).withAlpha(25), // secondary/10
-                            ),
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: SizedBox(
-                          width: 1,
-                          height: boxHeight * 0.8,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF8BD5FF).withAlpha(25),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Corner Accents
-                      _buildCornerAccent(Alignment.topLeft),
-                      _buildCornerAccent(Alignment.topRight),
-                      _buildCornerAccent(Alignment.bottomLeft),
-                      _buildCornerAccent(Alignment.bottomRight),
-
-                      // Animated Scan Line
-                      AnimatedBuilder(
-                        animation: _scanLineController,
-                        builder: (context, child) {
-                          final progress = _scanLineController.value;
-                          // Fade in at start, fade out at end
-                          double opacity = 1.0;
-                          if (progress < 0.05) {
-                            opacity = progress / 0.05;
-                          } else if (progress > 0.95) {
-                            opacity = (1.0 - progress) / 0.05;
-                          }
-
-                          return Positioned(
-                            top: progress * (boxHeight - 2),
-                            left: 0,
-                            right: 0,
-                            child: Opacity(
-                              opacity: opacity,
-                              child: Container(
-                                height: 2,
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.transparent,
-                                      Color(0xFF00BFFF),
-                                      Color(0xFF00FF7F),
-                                      Color(0xFF00BFFF),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 48),
-
-                // Search Bar Overlay
-                _buildSearchBar(),
-              ],
-            ),
+          // Bottom section — status + capture button OR results
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _showResults
+                ? _buildResultsPanel()
+                : _buildCapturePanel(),
           ),
         ],
       ),
     );
   }
 
-  /// Builds the "ANALYZING LABEL..." status pill with a pulsing cyan dot
-  Widget _buildStatusPill() {
+  Widget _buildCapturePanel() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(9999),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A).withAlpha(102), // glass-morphism bg
-            borderRadius: BorderRadius.circular(9999),
-            border: Border.all(
-              color: const Color(0xFF00BFFF).withAlpha(77), // border-[#00BFFF]/30
-              width: 1.0,
+            color: const Color(0xFF1A1A1A).withAlpha(220),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            border: Border(
+              top: BorderSide(
+                  color: const Color(0xFF00FF7F).withAlpha(30), width: 1),
             ),
           ),
-          child: Row(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Pulsing dot
-              AnimatedBuilder(
-                animation: _pulseController,
-                builder: (context, child) {
-                  final scale = 1.0 + sin(_pulseController.value * 2 * pi) * 0.4;
-                  return SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          // Ping ring
-                          Transform.scale(
-                            scale: scale,
-                            child: Container(
-                              width: 12,
-                              height: 12,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: const Color(0xFF8BD5FF).withAlpha((191 * (2.0 - scale)).round()),
-                              ),
-                            ),
-                          ),
-                          // Core dot
-                          Container(
-                            width: 12,
-                            height: 12,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFF8BD5FF), // secondary
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
               Text(
-                'ANALYZING LABEL...',
+                _statusMessage,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  color: const Color(0xFFB9CBB8),
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Capture button
+              GestureDetector(
+                onTap: _isProcessing ? null : _captureAndRecognize,
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isProcessing
+                        ? const Color(0xFF333333)
+                        : const Color(0xFF00FF7F),
+                    boxShadow: _isProcessing
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: const Color(0xFF00FF7F).withAlpha(80),
+                              blurRadius: 24,
+                              spreadRadius: -4,
+                            ),
+                          ],
+                  ),
+                  child: _isProcessing
+                      ? const Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(
+                              color: Color(0xFF00FF7F), strokeWidth: 3),
+                        )
+                      : const Icon(PhosphorIconsFill.camera,
+                          color: Colors.black, size: 32),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                _isProcessing ? 'Reading...' : 'Tap to scan',
                 style: GoogleFonts.manrope(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFFE5E2E1),
-                  letterSpacing: 3.0, // tracking-[0.2em]
+                  color: const Color(0xFFB9CBB8),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultsPanel() {
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+        child: Container(
+          constraints:
+              BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A).withAlpha(240),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white.withAlpha(50),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Found ${_foundProducts.length} match${_foundProducts.length > 1 ? 'es' : ''}',
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF00FF7F),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _showResults = false;
+                        _foundProducts = [];
+                        _statusMessage = 'Point camera at a product label';
+                      });
+                    },
+                    child: const Text(
+                      'Scan Again',
+                      style: TextStyle(
+                          color: Color(0xFFB9CBB8), fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _foundProducts.length,
+                  itemBuilder: (context, index) {
+                    final p = _foundProducts[index];
+                    final score =
+                        (p['health_score'] as num?)?.toDouble() ?? 5.0;
+                    final name = p['product_name'] as String? ?? 'Unknown';
+                    final id = p['id'] as int? ?? 0;
+                    final scoreColor = score >= 7
+                        ? const Color(0xFF00FF7F)
+                        : score >= 4.5
+                            ? const Color(0xFF00BFFF)
+                            : const Color(0xFFFF5252);
+
+                    return GestureDetector(
+                      onTap: () => context.push('/product-detail/$id'),
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF242424),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF353534),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                  PhosphorIconsRegular.forkKnife,
+                                  color: Color(0xFFB9CBB8),
+                                  size: 20),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                name,
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFFE5E2E1),
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: scoreColor.withAlpha(40),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color: scoreColor.withAlpha(80), width: 1),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  score.toStringAsFixed(1),
+                                  style: GoogleFonts.manrope(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
+                                    color: scoreColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -422,102 +493,62 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen>
     );
   }
 
-  /// Builds the search bar overlay below the AR bounding box
-  Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+  List<Widget> _buildCornerAccents() {
+    const cornerSize = 24.0;
+    const color = Color(0xFF00FF7F);
+    return [
+      Positioned(
+          top: 0,
+          left: 0,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A).withAlpha(102), // glass-morphism
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withAlpha(25), // white/10%
-                width: 1.0,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(127),
-                  blurRadius: 40,
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.search,
-                  color: Color(0xFFB9CBB8), // on-surface-variant
-                  size: 20,
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Search for product...',
-                  style: TextStyle(
-                    color: const Color(0xFFB9CBB8).withAlpha(153), // on-surface-variant/60
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds a corner accent bracket at the given alignment
-  Widget _buildCornerAccent(Alignment alignment) {
-    const double size = 56; // w-14 h-14
-    const double thickness = 4; // border-4
-    const Color accentColor = Color(0xFF8BD5FF); // secondary
-
-    final isTop = alignment.y < 0;
-    final isLeft = alignment.x < 0;
-
-    final borderRadius = BorderRadius.only(
-      topLeft: isTop && isLeft ? const Radius.circular(16) : Radius.zero,
-      topRight: isTop && !isLeft ? const Radius.circular(16) : Radius.zero,
-      bottomLeft: !isTop && isLeft ? const Radius.circular(16) : Radius.zero,
-      bottomRight: !isTop && !isLeft ? const Radius.circular(16) : Radius.zero,
-    );
-
-    return Positioned(
-      top: isTop ? -1 : null,
-      bottom: !isTop ? -1 : null,
-      left: isLeft ? -1 : null,
-      right: !isLeft ? -1 : null,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          borderRadius: borderRadius,
-          border: Border(
-            top: isTop
-                ? const BorderSide(color: accentColor, width: thickness)
-                : BorderSide.none,
-            bottom: !isTop
-                ? const BorderSide(color: accentColor, width: thickness)
-                : BorderSide.none,
-            left: isLeft
-                ? const BorderSide(color: accentColor, width: thickness)
-                : BorderSide.none,
-            right: !isLeft
-                ? const BorderSide(color: accentColor, width: thickness)
-                : BorderSide.none,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF8BD5FF).withAlpha(102), // rgba(139,213,255,0.4)
-              blurRadius: 15,
-            ),
-          ],
-        ),
-      ),
-    );
+              width: cornerSize,
+              height: cornerSize,
+              decoration: const BoxDecoration(
+                border: Border(
+                    top: BorderSide(color: color, width: 3),
+                    left: BorderSide(color: color, width: 3)),
+                borderRadius:
+                    BorderRadius.only(topLeft: Radius.circular(16)),
+              ))),
+      Positioned(
+          top: 0,
+          right: 0,
+          child: Container(
+              width: cornerSize,
+              height: cornerSize,
+              decoration: const BoxDecoration(
+                border: Border(
+                    top: BorderSide(color: color, width: 3),
+                    right: BorderSide(color: color, width: 3)),
+                borderRadius:
+                    BorderRadius.only(topRight: Radius.circular(16)),
+              ))),
+      Positioned(
+          bottom: 0,
+          left: 0,
+          child: Container(
+              width: cornerSize,
+              height: cornerSize,
+              decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(color: color, width: 3),
+                    left: BorderSide(color: color, width: 3)),
+                borderRadius:
+                    BorderRadius.only(bottomLeft: Radius.circular(16)),
+              ))),
+      Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+              width: cornerSize,
+              height: cornerSize,
+              decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(color: color, width: 3),
+                    right: BorderSide(color: color, width: 3)),
+                borderRadius:
+                    BorderRadius.only(bottomRight: Radius.circular(16)),
+              ))),
+    ];
   }
 }

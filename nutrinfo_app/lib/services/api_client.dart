@@ -1,193 +1,86 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
 import 'package:http/http.dart' as http;
-import '../models/product_model.dart';
-import '../models/user_model.dart';
-import '../models/scan_history_model.dart';
-import '../models/review_model.dart';
 
-/// Centralized HTTP client for all Nutrinfo API calls.
-///
-/// Base URL is resolved per-platform:
-///  - Android emulator → 10.0.2.2 (host machine proxy)
-///  - Web / Desktop    → localhost
-///  - Physical device  → set via [baseUrl] constructor param
-///
-/// All authenticated endpoints attach `Authorization: Bearer <token>`.
+/// API client for the Nutrinfo backend — no authentication.
 class ApiClient {
-  /// Your PC's local-network IP for physical-device testing.
-  /// Find via `ipconfig` (Windows) or `ifconfig` (macOS/Linux).
-  static const String _physicalDeviceIp = '10.159.62.227';
-
-  static String get _defaultBaseUrl {
-    if (kIsWeb) return 'http://localhost:8000/api/v1';
+  /// Platform-aware base URL: Android emulator uses 10.0.2.2,
+  /// physical devices/iOS use the machine's LAN IP.
+  static String get _baseUrl {
+    if (kIsWeb) return 'http://localhost:8000';
     if (Platform.isAndroid) {
-      // 10.0.2.2 is the emulator proxy; for physical devices use LAN IP.
-      // Set to false when using emulator, true when using a real device.
-      const usePhysicalDevice = true;
-      return usePhysicalDevice
-          ? 'http://$_physicalDeviceIp:8000/api/v1'
-          : 'http://10.0.2.2:8000/api/v1';
+      // Use your machine's LAN IP for physical device, 10.0.2.2 for emulator
+      return 'http://10.0.2.2:8000';
     }
-    return 'http://localhost:8000/api/v1';
+    return 'http://localhost:8000';
   }
 
-  final String baseUrl;
-  final http.Client _client;
+  final http.Client _client = http.Client();
 
-  ApiClient({String? baseUrl, http.Client? client})
-      : baseUrl = baseUrl ?? _defaultBaseUrl,
-        _client = client ?? http.Client();
+  // ── Product Search ──────────────────────────────────────────────────────
 
-  Map<String, String> _authHeaders(String token) => {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      };
+  /// Search products by name. Returns list of product maps.
+  Future<List<Map<String, dynamic>>> searchProducts(String query) async {
+    if (query.trim().length < 2) return [];
 
-  // ─── Auth ───────────────────────────────────────────────
+    try {
+      final uri = Uri.parse('$_baseUrl/api/v1/products/search')
+          .replace(queryParameters: {'q': query.trim(), 'limit': '20'});
+      final response = await _client.get(uri).timeout(
+        const Duration(seconds: 10),
+      );
 
-  /// Sync Auth0 user with backend DB. Called after login/signup.
-  Future<UserModel> syncUser({
-    required String token,
-    String? displayName,
-    String? email,
-    String dietaryFocus = 'None',
-  }) async {
-    final response = await _client.post(
-      Uri.parse('$baseUrl/auth/sync'),
-      headers: _authHeaders(token),
-      body: jsonEncode({
-        'display_name': displayName,
-        'email': email,
-        'dietary_focus': dietaryFocus,
-      }),
-    );
-    _throwOnError(response);
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
-    return UserModel.fromJson(json['user'] as Map<String, dynamic>);
-  }
-
-  // ─── Scan ───────────────────────────────────────────────
-
-  /// Upload a product image for ML analysis. Returns the full product data.
-  Future<ProductModel> scanProduct({
-    required String token,
-    required Uint8List imageBytes,
-    String filename = 'scan.jpg',
-  }) async {
-    final uri = Uri.parse('$baseUrl/scan');
-    final request = http.MultipartRequest('POST', uri)
-      ..headers['Authorization'] = 'Bearer $token'
-      ..files.add(http.MultipartFile.fromBytes(
-        'image',
-        imageBytes,
-        filename: filename,
-      ));
-
-    final streamed = await _client.send(request);
-    final response = await http.Response.fromStream(streamed);
-    _throwOnError(response);
-
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
-    final data = json['data'] as Map<String, dynamic>;
-    return ProductModel.fromJson(data);
-  }
-
-  // ─── Products ───────────────────────────────────────────
-
-  /// Fetch a single cached product by ID.
-  Future<ProductModel> getProduct({
-    required String token,
-    required String productId,
-  }) async {
-    final response = await _client.get(
-      Uri.parse('$baseUrl/products/$productId'),
-      headers: _authHeaders(token),
-    );
-    _throwOnError(response);
-    return ProductModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  }
-
-  // ─── History ────────────────────────────────────────────
-
-  /// Get the authenticated user's scan history (joined with product).
-  Future<List<ScanHistoryModel>> getHistory({
-    required String token,
-    int limit = 20,
-    int offset = 0,
-  }) async {
-    final response = await _client.get(
-      Uri.parse('$baseUrl/history?limit=$limit&offset=$offset'),
-      headers: _authHeaders(token),
-    );
-    _throwOnError(response);
-    final list = jsonDecode(response.body) as List<dynamic>;
-    return list
-        .map((e) => ScanHistoryModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  // ─── Reviews ────────────────────────────────────────────
-
-  /// Get all reviews for a product (public, no auth required).
-  Future<List<ReviewModel>> getReviews({required String productId}) async {
-    final response = await _client.get(
-      Uri.parse('$baseUrl/reviews/$productId'),
-    );
-    _throwOnError(response);
-    final list = jsonDecode(response.body) as List<dynamic>;
-    return list
-        .map((e) => ReviewModel.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  /// Create a new review on a product.
-  Future<ReviewModel> createReview({
-    required String token,
-    required String productId,
-    required int rating,
-    required String body,
-  }) async {
-    final response = await _client.post(
-      Uri.parse('$baseUrl/reviews'),
-      headers: _authHeaders(token),
-      body: jsonEncode({
-        'product_id': productId,
-        'rating': rating,
-        'body': body,
-      }),
-    );
-    _throwOnError(response);
-    return ReviewModel.fromJson(
-        jsonDecode(response.body) as Map<String, dynamic>);
-  }
-
-  // ─── Helpers ────────────────────────────────────────────
-
-  void _throwOnError(http.Response response) {
-    if (response.statusCode >= 400) {
-      String detail = 'Request failed with status ${response.statusCode}';
-      try {
-        final json = jsonDecode(response.body) as Map<String, dynamic>;
-        detail = json['detail'] as String? ?? detail;
-      } catch (_) {}
-      throw ApiException(response.statusCode, detail);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      }
+    } catch (e) {
+      debugPrint('Search error: $e');
     }
+    return [];
   }
 
-  void dispose() => _client.close();
-}
+  // ── Product Detail ──────────────────────────────────────────────────────
 
-/// Custom exception for API errors with status code and message.
-class ApiException implements Exception {
-  final int statusCode;
-  final String message;
+  /// Get a single product by numeric ID.
+  Future<Map<String, dynamic>?> getProduct(int id) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/api/v1/products/$id');
+      final response = await _client.get(uri).timeout(
+        const Duration(seconds: 10),
+      );
 
-  const ApiException(this.statusCode, this.message);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        if (data.containsKey('error')) return null;
+        return data;
+      }
+    } catch (e) {
+      debugPrint('Get product error: $e');
+    }
+    return null;
+  }
 
-  @override
-  String toString() => 'ApiException($statusCode): $message';
+  // ── Scan by Name (OCR) ─────────────────────────────────────────────────
+
+  /// Send OCR-extracted text to backend for product matching.
+  /// Returns {"found": true, "products": [...]} or {"found": false, "message": "..."}
+  Future<Map<String, dynamic>> scanByName(String productName) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/api/v1/products/scan-by-name');
+      final response = await _client.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'product_name': productName.trim()}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      }
+    } catch (e) {
+      debugPrint('Scan-by-name error: $e');
+    }
+    return {'found': false, 'message': 'Could not connect to server.'};
+  }
 }

@@ -1,0 +1,20 @@
+﻿Analyzing nutrinfo_app...                                       
+
+   info - Unnecessary use of multiple underscores - lib\features\home\home_screen.dart:75:45 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\home\home_screen.dart:75:49 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\profile\profile_screen.dart:17:18 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\profile\profile_screen.dart:182:37 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\features\profile\profile_screen.dart:182:41 - unnecessary_underscores
+   info - Unnecessary use of multiple underscores - lib\main.dart:26:18 - unnecessary_underscores
+
+flutter : 6 issues found. (ran in 6.5s)
+At line:1 char:1
++ flutter analyze 2>&1 | Out-File 
+-FilePath "analyze_output.txt" -Encod ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified 
+   : (6 issues found. (ran in 6.5s):Strin  
+  g) [], RemoteException
+    + FullyQualifiedErrorId : NativeComman 
+   dError
+ 

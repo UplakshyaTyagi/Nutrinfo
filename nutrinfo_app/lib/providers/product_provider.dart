@@ -1,15 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/product_model.dart';
-import 'auth_provider.dart';
+import '../providers/auth_provider.dart';
 
-/// Fetches a single product by ID from the cache.
-///
-/// Usage: `ref.watch(productProvider(productId))`
-final productProvider =
-    FutureProvider.family<ProductModel, String>((ref, productId) async {
-  final token = ref.read(authTokenProvider);
-  if (token == null) throw Exception('Not authenticated');
-
+/// Search products by name query — returns list of product maps from backend.
+final productSearchProvider =
+    FutureProvider.family<List<Map<String, dynamic>>, String>((ref, query) async {
   final api = ref.read(apiClientProvider);
-  return api.getProduct(token: token, productId: productId);
+  return api.searchProducts(query);
+});
+
+/// Get a single product by numeric ID.
+final productByIdProvider =
+    FutureProvider.family<Map<String, dynamic>?, int>((ref, id) async {
+  final api = ref.read(apiClientProvider);
+  return api.getProduct(id);
+});
+
+/// Scan by name — send OCR text to backend for matching.
+final scanByNameProvider =
+    FutureProvider.family<Map<String, dynamic>, String>((ref, name) async {
+  final api = ref.read(apiClientProvider);
+  return api.scanByName(name);
 });

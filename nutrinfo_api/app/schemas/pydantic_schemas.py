@@ -9,7 +9,9 @@ class UserBase(BaseModel):
     firebase_uid: str
     display_name: str
     email: str
+    picture_url: str = ""
     dietary_focus: str
+    is_pro: bool = False
 
 class ProductBase(BaseModel):
     name: str
