@@ -7,14 +7,16 @@
    info - Unnecessary use of multiple underscores - lib\features\profile\profile_screen.dart:182:41 - unnecessary_underscores
    info - Unnecessary use of multiple underscores - lib\main.dart:26:18 - unnecessary_underscores
 
-flutter : 6 issues found. (ran in 6.5s)
+flutter : 6 issues found. (ran in 8.4s)
 At line:1 char:1
-+ flutter analyze 2>&1 | Out-File 
--FilePath "analyze_output.txt" -Encod ...
-+ ~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified 
-   : (6 issues found. (ran in 6.5s):Strin  
-  g) [], RemoteException
-    + FullyQualifiedErrorId : NativeComman 
-   dError
++ flutter analyze --no-fatal-infos 
+2>&1 | Out-File -FilePath "analyze_o 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : 
+NotSpecified    : (6 issues found. 
+(ran in 8.4s):Strin    g) [], 
+RemoteException
+    + FullyQualifiedErrorId : 
+NativeComman    dError
  

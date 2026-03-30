@@ -4,26 +4,35 @@ import 'package:go_router/go_router.dart';
 import '../features/main_shell/main_shell.dart';
 import '../features/home/home_screen.dart';
 import '../features/history/history_screen.dart';
-import '../features/profile/profile_screen.dart';
+import '../features/splash/splash_screen.dart';
 import '../features/scanner/scanner_screen.dart';
 import '../features/product_detail/product_detail_screen.dart';
+import '../features/settings/settings_screen.dart';
 import '../features/expert/expert_dashboard_screen.dart';
+import '../features/reviews/reviews_screen.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 
-/// GoRouter — no auth guard, starts directly at /home.
+/// GoRouter — splash → home, settings/expert/reviews are full-screen overlays.
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+    initialLocation: '/splash',
     routes: [
-      // Scanner — full-screen overlay above the shell
+      // Splash screen
+      GoRoute(
+        path: '/splash',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SplashScreen(),
+      ),
+      // Scanner — full-screen overlay
       GoRoute(
         path: '/scanner',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ScannerScreen(),
       ),
-      // Product detail — full-screen overlay with product ID
+      // Product detail
       GoRoute(
         path: '/product-detail/:productId',
         parentNavigatorKey: _rootNavigatorKey,
@@ -32,12 +41,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return ProductDetailScreen(productId: productId);
         },
       ),
-      // Expert dashboard
+      // Settings — full-screen overlay (accessed from top-right icon)
+      GoRoute(
+        path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      // Expert dashboard — accessed from Settings
       GoRoute(
         path: '/expert',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ExpertDashboardScreen(),
       ),
+      // Reviews — accessed from Settings
+      GoRoute(
+        path: '/reviews',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ReviewsScreen(),
+      ),
+      // Main shell with 2 tabs: Home + History
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainShell(navigationShell: navigationShell);
@@ -56,14 +78,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: '/history',
                 builder: (context, state) => const HistoryScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen(),
               ),
             ],
           ),

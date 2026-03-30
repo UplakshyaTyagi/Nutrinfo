@@ -11,7 +11,8 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -23,22 +24,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
     _controller.forward();
 
-    // Navigate to next screen after delay
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        // TODO: Later add auth check from SharedPreferences/Providers
-        context.go('/auth');
+        context.go('/home');
       }
     });
   }
@@ -54,7 +53,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     return Scaffold(
       body: Stack(
         children: [
-          // Background Gradient
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -64,8 +62,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
               ),
             ),
           ),
-          
-          // Glassmorphism Center piece
           Center(
             child: AnimatedBuilder(
               animation: _controller,
@@ -77,7 +73,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        filter:
+                            ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                         child: Container(
                           width: 220,
                           height: 220,
@@ -85,16 +82,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                             color: AppTheme.surfaceGlass,
                             borderRadius: BorderRadius.circular(30),
                             border: Border.all(
-                              color: AppTheme.neonMint.withAlpha(76), // 0.3 * 255
+                              color: AppTheme.neonMint.withAlpha(76),
                               width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.neonMint.withAlpha(25), // 0.1 * 255
+                                color: AppTheme.neonMint.withAlpha(25),
                                 blurRadius: 20,
                                 spreadRadius: -5,
                               )
-                            ]
+                            ],
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +101,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                                 width: 80,
                                 height: 80,
                                 errorBuilder: (context, error, stackTrace) {
-                                  // Graceful fallback to icon until user adds the logo
                                   return const Icon(
                                     Icons.qr_code_scanner_rounded,
                                     size: 80,
@@ -115,11 +111,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
                               const SizedBox(height: 16),
                               Text(
                                 'Nutrinfo',
-                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.0,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 2.0,
+                                    ),
                               ),
                             ],
                           ),

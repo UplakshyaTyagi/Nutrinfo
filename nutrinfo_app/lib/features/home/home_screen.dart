@@ -97,29 +97,52 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  // Search icon
-                  GestureDetector(
-                    onTap: () {
-                      showSearch(
-                        context: context,
-                        delegate: _ProductSearchDelegate(),
-                      );
-                    },
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A).withAlpha(150),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.white.withAlpha(20), width: 1),
+                  // Search + Settings icons
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          showSearch(
+                            context: context,
+                            delegate: _ProductSearchDelegate(),
+                          );
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2A2A2A).withAlpha(150),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: Colors.white.withAlpha(20), width: 1),
+                          ),
+                          child: const Icon(
+                            PhosphorIconsRegular.magnifyingGlass,
+                            color: Color(0xFFB9CBB8),
+                            size: 20,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        PhosphorIconsRegular.magnifyingGlass,
-                        color: Color(0xFFB9CBB8),
-                        size: 20,
+                      const SizedBox(width: 10),
+                      GestureDetector(
+                        onTap: () => context.push('/settings'),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2A2A2A).withAlpha(150),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: Colors.white.withAlpha(20), width: 1),
+                          ),
+                          child: const Icon(
+                            PhosphorIconsRegular.gearSix,
+                            color: Color(0xFFB9CBB8),
+                            size: 20,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -259,10 +282,10 @@ class HomeScreen extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(
           child: _buildQuickAction(
-            icon: PhosphorIconsRegular.certificate,
-            label: 'Expert',
+            icon: PhosphorIconsRegular.chatCircleDots,
+            label: 'Reviews',
             color: const Color(0xFFFFDF95),
-            onTap: () => context.push('/expert'),
+            onTap: () => context.push('/reviews'),
           ),
         ),
       ],
