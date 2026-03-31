@@ -1,17 +1,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:nutrinfo_app/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../core/widgets/shimmer_network_image.dart';
 
 class ExpertDashboardScreen extends ConsumerWidget {
-  const ExpertDashboardScreen({super.key});
+  ExpertDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: const Color(0xFF131313),
+      backgroundColor: context.bgScreen,
       body: Column(
         children: [
           // Header — expert avatar + role + bell
@@ -20,28 +21,35 @@ class ExpertDashboardScreen extends ConsumerWidget {
           // Scrollable content
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(top: 0, bottom: 120, left: 24, right: 24),
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 120,
+                left: 24,
+                right: 24,
+              ),
               children: [
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 // Hero section
-                _buildHeroSection(),
-                const SizedBox(height: 40),
+                _buildHeroSection(context),
+                SizedBox(height: 40),
 
                 // Analytics cards
                 _buildAnalyticsCard(
+                  context,
                   label: 'TOTAL INSIGHTS READ',
                   icon: PhosphorIconsRegular.eye,
                   value: '14.2k',
                   subtitle: '+12% this week',
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildAnalyticsCard(
+                  context,
                   label: 'COMMUNITY UPVOTES',
                   icon: PhosphorIconsRegular.thumbsUp,
                   value: '890',
                   subtitle: 'Top 1% Contributor',
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
 
                 // Foods Needing Analysis header
                 Row(
@@ -52,38 +60,44 @@ class ExpertDashboardScreen extends ConsumerWidget {
                       style: GoogleFonts.manrope(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFE5E2E1),
+                        color: context.textPrimary,
                       ),
                     ),
-                    const Text(
+                    Text(
                       '24 PENDING\nTASKS',
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFFB9CBB8),
+                        color: context.textSecondary,
                         letterSpacing: 2.0,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Food list rows
                 _buildFoodRow(
-                  imageUrl: 'https://images.unsplash.com/photo-1598511726623-d2e9996e91a4?w=150&q=80',
+                  context,
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1598511726623-d2e9996e91a4?w=150&q=80',
                   name: "Trader Joe's\nCauliflower\nGnocchi",
                   category: 'Category:\nFrozen / Plant-Based',
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildFoodRow(
-                  imageUrl: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=150&q=80',
+                  context,
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=150&q=80',
                   name: 'A2 Organic\nPlain Greek\nYogurt',
                   category: 'Category:\nDairy / Probiotics',
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildFoodRow(
-                  imageUrl: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=150&q=80',
+                  context,
+                  imageUrl:
+                      'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=150&q=80',
                   name: 'Ginger Lemon\nProbiotic\nKombucha',
                   category: 'Category:\nBeverages / Fermented',
                 ),
@@ -99,12 +113,12 @@ class ExpertDashboardScreen extends ConsumerWidget {
   Widget _buildHeader(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0A0A).withAlpha(204), // zinc-950/80
+        color: context.bgHeader.withAlpha(204), // zinc-950/80
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(102),
             blurRadius: 20,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -114,7 +128,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -130,13 +144,14 @@ class ExpertDashboardScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFF353534),
+                                color: context.bgInput,
                                 width: 2.0,
                               ),
                             ),
-                            child: const ClipOval(
+                            child: ClipOval(
                               child: ShimmerNetworkImage(
-                                imageUrl: 'https://ui-avatars.com/api/?name=DrSmith&background=random&size=100',
+                                imageUrl:
+                                    'https://ui-avatars.com/api/?name=DrSmith&background=random&size=100',
                               ),
                             ),
                           ),
@@ -144,9 +159,9 @@ class ExpertDashboardScreen extends ConsumerWidget {
                             bottom: -2,
                             right: -2,
                             child: Container(
-                              padding: const EdgeInsets.all(2),
+                              padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFDF95), // tertiary-fixed
+                                color: context.accentGold, // tertiary-fixed
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
@@ -155,7 +170,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 PhosphorIconsFill.shield,
                                 color: Color(0xFF251A00),
                                 size: 12,
@@ -164,16 +179,16 @@ class ExpertDashboardScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'VERIFIED NUTRITIONIST',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFB9CBB8),
+                              color: context.textSecondary,
                               letterSpacing: 3.0,
                             ),
                           ),
@@ -193,7 +208,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
                   // Bell icon
                   Icon(
                     PhosphorIconsRegular.bell,
-                    color: const Color(0xFF00FF7F),
+                    color: context.accentMint,
                     size: 24,
                   ),
                 ],
@@ -206,7 +221,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
   }
 
   /// Hero welcome section
-  Widget _buildHeroSection() {
+  Widget _buildHeroSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -215,17 +230,17 @@ class ExpertDashboardScreen extends ConsumerWidget {
           style: GoogleFonts.manrope(
             fontSize: 48,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFFE5E2E1),
+            color: context.textPrimary,
             height: 1.05,
             letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
+        SizedBox(height: 8),
+        Text(
           'Your expert insights are shaping 12\nnew health profiles today.',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFFB9CBB8),
+            color: context.textSecondary,
             height: 1.4,
           ),
         ),
@@ -234,7 +249,8 @@ class ExpertDashboardScreen extends ConsumerWidget {
   }
 
   /// Analytics glass card with cyan glow
-  Widget _buildAnalyticsCard({
+  Widget _buildAnalyticsCard(
+    BuildContext context, {
     required String label,
     required IconData icon,
     required String value,
@@ -245,17 +261,17 @@ class ExpertDashboardScreen extends ConsumerWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24.0, sigmaY: 24.0),
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2A2A).withAlpha(102), // glass-panel
+            color: context.bgInput.withAlpha(102), // glass-panel
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: const Color(0xFF00BDFD).withAlpha(25), // secondary-container/10
+              color: Color(0xFF00BDFD).withAlpha(25), // secondary-container/10
               width: 1.0,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00BDFD).withAlpha(38), // cyan-glow
+                color: Color(0xFF00BDFD).withAlpha(38), // cyan-glow
                 blurRadius: 15,
               ),
             ],
@@ -268,17 +284,17 @@ class ExpertDashboardScreen extends ConsumerWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFFB9CBB8),
+                      color: context.textSecondary,
                       letterSpacing: 2.0,
                     ),
                   ),
-                  Icon(icon, color: const Color(0xFF8BD5FF), size: 22),
+                  Icon(icon, color: Color(0xFF8BD5FF), size: 22),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
@@ -288,22 +304,24 @@ class ExpertDashboardScreen extends ConsumerWidget {
                     style: GoogleFonts.manrope(
                       fontSize: 64,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF00BDFD), // secondary-container
+                      color: Color(0xFF00BDFD), // secondary-container
                       letterSpacing: -3,
                       shadows: [
                         Shadow(
-                          color: const Color(0xFF00BDFD).withAlpha(128), // cyan-glow-intense
+                          color: Color(
+                            0xFF00BDFD,
+                          ).withAlpha(128), // cyan-glow-intense
                           blurRadius: 20,
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: const Color(0xFF8BD5FF).withAlpha(153), // secondary/60
+                      color: Color(0xFF8BD5FF).withAlpha(153), // secondary/60
                     ),
                   ),
                 ],
@@ -316,21 +334,22 @@ class ExpertDashboardScreen extends ConsumerWidget {
   }
 
   /// Food row with image, name, category, and "Add Insight" button
-  Widget _buildFoodRow({
+  Widget _buildFoodRow(
+    BuildContext context, {
     required String imageUrl,
     required String name,
     required String category,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1B1B), // surface-container-low
+        color: context.bgCard, // surface-container-low
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(77),
             blurRadius: 40,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -341,7 +360,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: const Color(0xFF353534),
+              color: context.bgInput,
               borderRadius: BorderRadius.circular(12),
             ),
             child: ClipRRect(
@@ -349,7 +368,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
               child: ShimmerNetworkImage(imageUrl: imageUrl),
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           // Name + category
           Expanded(
             child: Column(
@@ -360,16 +379,16 @@ class ExpertDashboardScreen extends ConsumerWidget {
                   style: GoogleFonts.manrope(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFFE5E2E1),
+                    color: context.textPrimary,
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   category,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Color(0xFFB9CBB8),
+                    color: context.textSecondary,
                     height: 1.3,
                   ),
                 ),
@@ -378,13 +397,13 @@ class ExpertDashboardScreen extends ConsumerWidget {
           ),
           // Add Insight button
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF00BDFD), // secondary-container
+              color: Color(0xFF00BDFD), // secondary-container
               borderRadius: BorderRadius.circular(9999),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00BDFD).withAlpha(77), // shadow
+                  color: Color(0xFF00BDFD).withAlpha(77), // shadow
                   blurRadius: 20,
                 ),
               ],
@@ -395,7 +414,7 @@ class ExpertDashboardScreen extends ConsumerWidget {
               style: GoogleFonts.manrope(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF004964), // on-secondary-container
+                color: Color(0xFF004964), // on-secondary-container
               ),
             ),
           ),

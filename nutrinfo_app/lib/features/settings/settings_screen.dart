@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:nutrinfo_app/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +8,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({super.key});
+  SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,172 +20,184 @@ class SettingsScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF131313),
+      backgroundColor: context.bgScreen,
       body: Column(
         children: [
           _buildHeader(context),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               children: [
                 // ── PRO Card (Coming Soon) ──
-                _buildProCard(),
-                const SizedBox(height: 32),
+                _buildProCard(context),
+                SizedBox(height: 32),
 
                 // ── ACCOUNT PREFERENCES ──
-                _buildSectionTitle('Account Preferences'),
-                const SizedBox(height: 16),
+                _buildSectionTitle(context, 'Account Preferences'),
+                SizedBox(height: 16),
 
                 // Dark Mode toggle
                 _buildToggleRow(
+                  context,
                   icon: PhosphorIconsFill.moon,
-                  iconColor: const Color(0xFF00BFFF),
+                  iconColor: context.accentCyan,
                   label: 'Dark Mode',
                   value: isDark,
                   onChanged: (val) {
                     ref.read(themeModeProvider.notifier).toggle();
                   },
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // Push Notifications toggle
                 _buildToggleRow(
+                  context,
                   icon: PhosphorIconsFill.bellSimple,
-                  iconColor: const Color(0xFF00FF7F),
+                  iconColor: context.accentMint,
                   label: 'Push Notifications',
                   value: true,
                   onChanged: (val) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text('Coming soon!'),
-                        backgroundColor: Color(0xFF2A2A2A),
+                        backgroundColor: context.bgInput,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // Dietary Profile toggle
                 _buildToggleRow(
+                  context,
                   icon: PhosphorIconsFill.forkKnife,
-                  iconColor: const Color(0xFFFFDF95),
+                  iconColor: context.accentGold,
                   label: 'Dietary Profile',
                   value: false,
                   onChanged: (val) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text('Coming soon!'),
-                        backgroundColor: Color(0xFF2A2A2A),
+                        backgroundColor: context.bgInput,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Personal Info card ──
                 _buildLargeMenuCard(
+                  context,
                   icon: PhosphorIconsFill.userCircle,
-                  iconBgColor: const Color(0xFF00FF7F).withAlpha(30),
-                  iconColor: const Color(0xFF00FF7F),
+                  iconBgColor: context.accentMint.withAlpha(30),
+                  iconColor: context.accentMint,
                   title: 'Personal Info',
                   subtitle: 'Height, Weight, Age',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text('Coming soon!'),
-                        backgroundColor: Color(0xFF2A2A2A),
+                        backgroundColor: context.bgInput,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
 
                 // ── Privacy card ──
                 _buildLargeMenuCard(
+                  context,
                   icon: PhosphorIconsFill.shieldCheck,
-                  iconBgColor: const Color(0xFF00BFFF).withAlpha(30),
-                  iconColor: const Color(0xFF00BFFF),
+                  iconBgColor: context.accentCyan.withAlpha(30),
+                  iconColor: context.accentCyan,
                   title: 'Privacy',
                   subtitle: 'Data usage & tracking',
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text('Coming soon!'),
-                        backgroundColor: Color(0xFF2A2A2A),
+                        backgroundColor: context.bgInput,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // ── Apply for Expert ──
                 _buildMenuRow(
+                  context,
                   icon: PhosphorIconsRegular.certificate,
                   label: 'Apply for Expert',
                   trailingText: 'NEW',
-                  trailingColor: const Color(0xFFFFDF95),
+                  trailingColor: context.accentGold,
                   onTap: () => context.push('/expert'),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // ── Reviews ──
                 _buildMenuRow(
+                  context,
                   icon: PhosphorIconsRegular.chatCircleDots,
                   label: 'Reviews & Community',
                   onTap: () => context.push('/reviews'),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // ── Help & Support ──
                 _buildMenuRow(
+                  context,
                   icon: PhosphorIconsRegular.question,
                   label: 'Help & Support',
                   onTap: () {},
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // ── About ──
                 _buildMenuRow(
+                  context,
                   icon: PhosphorIconsRegular.info,
                   label: 'About Nutrinfo',
                   onTap: () {},
                 ),
 
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 // DELETE ACCOUNT
                 Center(
                   child: TextButton.icon(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text('Coming soon!'),
-                          backgroundColor: Color(0xFF2A2A2A),
+                          backgroundColor: context.bgInput,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
                     },
-                    icon: const Icon(PhosphorIconsFill.trash,
-                        color: Color(0xFFFF5252), size: 18),
+                    icon: Icon(
+                      PhosphorIconsFill.trash,
+                      color: Color(0xFFFF5252),
+                      size: 18,
+                    ),
                     label: Text(
                       'DELETE ACCOUNT',
                       style: GoogleFonts.manrope(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFFFF5252),
+                        color: Color(0xFFFF5252),
                         letterSpacing: 2.0,
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Version
                 Center(
@@ -195,24 +208,24 @@ class SettingsScreen extends ConsumerWidget {
                         style: GoogleFonts.manrope(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFFB9CBB8).withAlpha(100),
+                          color: context.textSecondary.withAlpha(100),
                           letterSpacing: 2.0,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         '© 2024 DIGITAL VITALIST INC.',
                         style: GoogleFonts.manrope(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
-                          color: const Color(0xFFB9CBB8).withAlpha(80),
+                          color: context.textSecondary.withAlpha(80),
                           letterSpacing: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 120),
+                SizedBox(height: 120),
               ],
             ),
           ),
@@ -226,12 +239,12 @@ class SettingsScreen extends ConsumerWidget {
   Widget _buildHeader(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0A0A).withAlpha(204),
+        color: context.bgHeader.withAlpha(204),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(102),
             blurRadius: 20,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -241,8 +254,7 @@ class SettingsScreen extends ConsumerWidget {
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0, vertical: 12.0),
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
               child: Row(
                 children: [
                   GestureDetector(
@@ -251,24 +263,30 @@ class SettingsScreen extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A).withAlpha(150),
+                        color: context.bgInput.withAlpha(150),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back,
-                          color: Colors.white, size: 20),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Row(
                     children: [
-                      Image.asset('assets/images/logo.png',
-                          width: 28, height: 28,
-                          errorBuilder: (c, e, s) => const Icon(
-                                PhosphorIconsFill.leaf,
-                                color: Color(0xFF00FF7F),
-                                size: 24,
-                              )),
-                      const SizedBox(width: 10),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 28,
+                        height: 28,
+                        errorBuilder: (c, e, s) => Icon(
+                          PhosphorIconsFill.leaf,
+                          color: context.accentMint,
+                          size: 24,
+                        ),
+                      ),
+                      SizedBox(width: 10),
                       Text(
                         'Nutrinfo',
                         style: GoogleFonts.manrope(
@@ -279,23 +297,22 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const Spacer(),
+                  Spacer(),
                   // PRO badge
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00FF7F).withAlpha(25),
+                      color: context.accentMint.withAlpha(25),
                       borderRadius: BorderRadius.circular(9999),
                       border: Border.all(
-                        color: const Color(0xFF00FF7F).withAlpha(51),
+                        color: context.accentMint.withAlpha(51),
                         width: 1.0,
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'PRO',
                       style: TextStyle(
-                        color: Color(0xFF00FF7F),
+                        color: context.accentMint,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 2.0,
@@ -313,14 +330,14 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── PRO Card (Coming Soon) ──
 
-  Widget _buildProCard() {
+  Widget _buildProCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF00FF7F), Color(0xFF00BFFF)],
+          colors: [context.accentMint, context.accentCyan],
         ),
       ),
       child: Stack(
@@ -334,23 +351,19 @@ class SettingsScreen extends ConsumerWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withAlpha(30),
-                      Colors.transparent,
-                    ],
+                    colors: [Colors.white.withAlpha(30), Colors.transparent],
                   ),
                 ),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(28),
+            padding: EdgeInsets.all(28),
             child: Column(
               children: [
                 // Premium member badge
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 6),
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha(60),
                     borderRadius: BorderRadius.circular(9999),
@@ -358,9 +371,12 @@ class SettingsScreen extends ConsumerWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(PhosphorIconsFill.diamond,
-                          color: Colors.white, size: 14),
-                      const SizedBox(width: 6),
+                      Icon(
+                        PhosphorIconsFill.diamond,
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                      SizedBox(width: 6),
                       Text(
                         'PREMIUM MEMBER',
                         style: GoogleFonts.manrope(
@@ -373,7 +389,7 @@ class SettingsScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text(
                   'Elevate Your\nNutrition',
                   textAlign: TextAlign.center,
@@ -384,7 +400,7 @@ class SettingsScreen extends ConsumerWidget {
                     height: 1.1,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 Text(
                   'Unlock the full potential of AI-driven\nhealth',
                   textAlign: TextAlign.center,
@@ -394,16 +410,16 @@ class SettingsScreen extends ConsumerWidget {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 // Feature pills
-                _buildProFeature('Unlimited Food Scans'),
-                const SizedBox(height: 8),
-                _buildProFeature('24/7 Nutritionist Chat'),
-                const SizedBox(height: 20),
+                _buildProFeature(context, 'Unlimited Food Scans'),
+                SizedBox(height: 8),
+                _buildProFeature(context, '24/7 Nutritionist Chat'),
+                SizedBox(height: 20),
                 // Upgrade (Coming Soon)
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     color: Colors.black.withAlpha(200),
                     borderRadius: BorderRadius.circular(16),
@@ -414,7 +430,7 @@ class SettingsScreen extends ConsumerWidget {
                       style: GoogleFonts.manrope(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: const Color(0xFF00FF7F),
+                        color: context.accentMint,
                       ),
                     ),
                   ),
@@ -427,7 +443,7 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProFeature(String text) {
+  Widget _buildProFeature(BuildContext context, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -438,10 +454,9 @@ class SettingsScreen extends ConsumerWidget {
             color: Colors.black.withAlpha(100),
             shape: BoxShape.circle,
           ),
-          child: const Icon(PhosphorIconsBold.check,
-              color: Colors.white, size: 14),
+          child: Icon(PhosphorIconsBold.check, color: Colors.white, size: 14),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: 10),
         Text(
           text,
           style: GoogleFonts.manrope(
@@ -456,14 +471,14 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Section title ──
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Center(
       child: Text(
         title.toUpperCase(),
         style: GoogleFonts.manrope(
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFFB9CBB8),
+          color: context.textSecondary,
           letterSpacing: 3.0,
         ),
       ),
@@ -472,7 +487,8 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Toggle row ──
 
-  Widget _buildToggleRow({
+  Widget _buildToggleRow(
+    BuildContext context, {
     required IconData icon,
     required Color iconColor,
     required String label,
@@ -480,9 +496,9 @@ class SettingsScreen extends ConsumerWidget {
     required ValueChanged<bool> onChanged,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1B1B),
+        color: context.bgCard,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -496,22 +512,22 @@ class SettingsScreen extends ConsumerWidget {
             ),
             child: Icon(icon, color: iconColor, size: 20),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: 14),
           Expanded(
             child: Text(
               label,
               style: GoogleFonts.manrope(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFFE5E2E1),
+                color: context.textPrimary,
               ),
             ),
           ),
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeTrackColor: const Color(0xFF00FF7F),
-            inactiveTrackColor: const Color(0xFF353534),
+            activeTrackColor: context.accentMint,
+            inactiveTrackColor: context.bgInput,
           ),
         ],
       ),
@@ -520,7 +536,8 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Large menu card (Personal Info / Privacy) ──
 
-  Widget _buildLargeMenuCard({
+  Widget _buildLargeMenuCard(
+    BuildContext context, {
     required IconData icon,
     required Color iconBgColor,
     required Color iconColor,
@@ -531,9 +548,9 @@ class SettingsScreen extends ConsumerWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: const Color(0xFF1C1B1B),
+          color: context.bgCard,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -547,22 +564,19 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: Icon(icon, color: iconColor, size: 28),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             Text(
               title,
               style: GoogleFonts.manrope(
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
-                color: const Color(0xFFE5E2E1),
+                color: context.textPrimary,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFFB9CBB8),
-              ),
+              style: TextStyle(fontSize: 13, color: context.textSecondary),
             ),
           ],
         ),
@@ -572,7 +586,8 @@ class SettingsScreen extends ConsumerWidget {
 
   // ── Menu row ──
 
-  Widget _buildMenuRow({
+  Widget _buildMenuRow(
+    BuildContext context, {
     required IconData icon,
     required String label,
     String? trailingText,
@@ -582,33 +597,31 @@ class SettingsScreen extends ConsumerWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFF1C1B1B),
+          color: context.bgCard,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFFB9CBB8), size: 22),
-            const SizedBox(width: 14),
+            Icon(icon, color: context.textSecondary, size: 22),
+            SizedBox(width: 14),
             Expanded(
               child: Text(
                 label,
                 style: GoogleFonts.manrope(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFE5E2E1),
+                  color: context.textPrimary,
                 ),
               ),
             ),
             if (trailingText != null)
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 2),
-                margin: const EdgeInsets.only(right: 8),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                margin: EdgeInsets.only(right: 8),
                 decoration: BoxDecoration(
-                  color: (trailingColor ?? const Color(0xFF00FF7F))
-                      .withAlpha(25),
+                  color: (trailingColor ?? context.accentMint).withAlpha(25),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -616,13 +629,16 @@ class SettingsScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: trailingColor ?? const Color(0xFF00FF7F),
+                    color: trailingColor ?? context.accentMint,
                     letterSpacing: 1.0,
                   ),
                 ),
               ),
-            const Icon(PhosphorIconsRegular.caretRight,
-                color: Color(0xFF666666), size: 18),
+            Icon(
+              PhosphorIconsRegular.caretRight,
+              color: Color(0xFF666666),
+              size: 18,
+            ),
           ],
         ),
       ),

@@ -6,8 +6,9 @@ const _kThemeModeKey = 'nutrinfo_theme_mode';
 
 /// Provides the current ThemeMode (dark/light/system).
 /// Persists the choice to SharedPreferences.
-final themeModeProvider =
-    AsyncNotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
+final themeModeProvider = AsyncNotifierProvider<ThemeModeNotifier, ThemeMode>(
+  ThemeModeNotifier.new,
+);
 
 class ThemeModeNotifier extends AsyncNotifier<ThemeMode> {
   @override

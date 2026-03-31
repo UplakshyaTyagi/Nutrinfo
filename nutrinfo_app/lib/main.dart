@@ -6,15 +6,11 @@ import 'providers/theme_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const ProviderScope(
-      child: NutrinfoApp(),
-    ),
-  );
+  runApp(ProviderScope(child: NutrinfoApp()));
 }
 
 class NutrinfoApp extends ConsumerWidget {
-  const NutrinfoApp({super.key});
+  NutrinfoApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

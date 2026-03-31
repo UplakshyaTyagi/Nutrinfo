@@ -8,7 +8,7 @@ class ScanHistoryModel {
   final DateTime scannedAt;
   final ProductModel? product;
 
-  const ScanHistoryModel({
+  ScanHistoryModel({
     required this.id,
     required this.userId,
     required this.productId,
@@ -23,7 +23,9 @@ class ScanHistoryModel {
       userId: json['user_id'] as String? ?? '',
       productId: json['product_id'] as String? ?? '',
       dietaryConflict: json['dietary_conflict'] as bool? ?? false,
-      scannedAt: DateTime.tryParse(json['scanned_at'] as String? ?? '') ?? DateTime.now(),
+      scannedAt:
+          DateTime.tryParse(json['scanned_at'] as String? ?? '') ??
+          DateTime.now(),
       product: json['product'] != null
           ? ProductModel.fromJson(json['product'] as Map<String, dynamic>)
           : null,

@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:nutrinfo_app/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -12,46 +13,43 @@ void showReviewsSheet(BuildContext context) {
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withAlpha(153), // black/60
-    builder: (context) => const ReviewsSheet(),
+    builder: (context) => ReviewsSheet(),
   );
 }
 
 class ReviewsSheet extends ConsumerWidget {
-  const ReviewsSheet({super.key});
+  ReviewsSheet({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(48)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(48)),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 32.0, sigmaY: 32.0),
         child: Container(
           height: screenHeight * 0.85,
           decoration: BoxDecoration(
-            color: const Color(0xFF131313).withAlpha(217), // rgba(19,19,19,0.85)
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(48)),
-            border: const Border(
+            color: context.bgScreen.withAlpha(217), // rgba(19,19,19,0.85)
+            borderRadius: BorderRadius.vertical(top: Radius.circular(48)),
+            border: Border(
               top: BorderSide(color: Color(0x1AFFFFFF), width: 1.0), // white/10
             ),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(127),
-                blurRadius: 24,
-              ),
+              BoxShadow(color: Colors.black.withAlpha(127), blurRadius: 24),
             ],
           ),
           child: Column(
             children: [
               // Drag Handle
               Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 4),
+                padding: EdgeInsets.only(top: 16, bottom: 4),
                 child: Container(
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(51), // white/20
+                    color: context.borderWhite20, // white/20
                     borderRadius: BorderRadius.circular(9999),
                   ),
                 ),
@@ -59,7 +57,7 @@ class ReviewsSheet extends ConsumerWidget {
 
               // Header — "COMMUNITY INTELLIGENCE" + "Insights & Reviews" + rating
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -67,7 +65,7 @@ class ReviewsSheet extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'COMMUNITY INTELLIGENCE',
                           style: TextStyle(
                             fontSize: 10,
@@ -76,13 +74,13 @@ class ReviewsSheet extends ConsumerWidget {
                             letterSpacing: 3.0,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           'Insights & Reviews',
                           style: GoogleFonts.manrope(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFFE5E2E1),
+                            color: context.textPrimary,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -90,27 +88,35 @@ class ReviewsSheet extends ConsumerWidget {
                     ),
                     // Rating badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A).withAlpha(153), // surface-container-high/60
+                        color: context.bgInput.withAlpha(
+                          153,
+                        ), // surface-container-high/60
                         borderRadius: BorderRadius.circular(9999),
-                        border: Border.all(color: Colors.white.withAlpha(13), width: 1.0),
+                        border: Border.all(
+                          color: Colors.white.withAlpha(13),
+                          width: 1.0,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             PhosphorIconsFill.star,
-                            color: Color(0xFF00FF7F),
+                            color: context.accentMint,
                             size: 18,
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: 6),
                           Text(
                             '4.8',
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFFE5E2E1),
+                              color: context.textPrimary,
                             ),
                           ),
                         ],
@@ -123,39 +129,47 @@ class ReviewsSheet extends ConsumerWidget {
               // Scrollable reviews list
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: 24),
                   children: [
                     // Expert Highlight Card — gradient border (gold→cyan)
-                    _buildExpertCard(),
-                    const SizedBox(height: 16),
+                    _buildExpertCard(context),
+                    SizedBox(height: 16),
                     // Regular community cards
                     _buildCommunityCard(
-                      avatarUrl: 'https://ui-avatars.com/api/?name=Marcus&background=random&size=100',
+                      context,
+                      avatarUrl:
+                          'https://ui-avatars.com/api/?name=Marcus&background=random&size=100',
                       role: 'Premium Member • 2h ago',
-                      body: 'Tested this before my morning fasted cardio. Mental clarity was noticeable within 20 mins. Great alternative to high-stim pre-workouts.',
+                      body:
+                          'Tested this before my morning fasted cardio. Mental clarity was noticeable within 20 mins. Great alternative to high-stim pre-workouts.',
                       votes: '842',
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     _buildCommunityCard(
+                      context,
                       initials: 'EL',
                       role: 'Community Member • 5h ago',
-                      body: "Decent flavor, but the texture is a bit gritty. Nutritionally it's perfect for my recovery window. 4/5 stars.",
+                      body:
+                          "Decent flavor, but the texture is a bit gritty. Nutritionally it's perfect for my recovery window. 4/5 stars.",
                       votes: '329',
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     _buildCommunityCard(
-                      avatarUrl: 'https://ui-avatars.com/api/?name=Sarah&background=random&size=100',
+                      context,
+                      avatarUrl:
+                          'https://ui-avatars.com/api/?name=Sarah&background=random&size=100',
                       role: 'Premium Member • 8h ago',
-                      body: "Love that this is 100% transparent with the sourcing. It's rare to find such high-quality amino profiles in vegan options.",
+                      body:
+                          "Love that this is 100% transparent with the sourcing. It's rare to find such high-quality amino profiles in vegan options.",
                       votes: '156',
                     ),
-                    const SizedBox(height: 120), // Space for input bar
+                    SizedBox(height: 120), // Space for input bar
                   ],
                 ),
               ),
 
               // Floating input bar
-              _buildInputBar(),
+              _buildInputBar(context),
             ],
           ),
         ),
@@ -164,7 +178,7 @@ class ReviewsSheet extends ConsumerWidget {
   }
 
   /// Expert highlight card with gradient border
-  Widget _buildExpertCard() {
+  Widget _buildExpertCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -172,22 +186,22 @@ class ReviewsSheet extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFFFDF95).withAlpha(128), // tertiary-fixed/50
-            const Color(0xFF00BDFD).withAlpha(128), // secondary-container/50
+            context.accentGold.withAlpha(128), // tertiary-fixed/50
+            Color(0xFF00BDFD).withAlpha(128), // secondary-container/50
           ],
         ),
       ),
       child: Container(
-        margin: const EdgeInsets.all(1.5), // border width
-        padding: const EdgeInsets.all(20),
+        margin: EdgeInsets.all(1.5), // border width
+        padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFFFFDF95).withAlpha(25), // tertiary-fixed/10
-              const Color(0xFF00BDFD).withAlpha(13), // secondary-container/5
+              context.accentGold.withAlpha(25), // tertiary-fixed/10
+              Color(0xFF00BDFD).withAlpha(13), // secondary-container/5
             ],
           ),
         ),
@@ -195,8 +209,8 @@ class ReviewsSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Voting column
-            _buildVoteColumn('1.2k', isExpert: true),
-            const SizedBox(width: 16),
+            _buildVoteColumn(context, '1.2k', isExpert: true),
+            SizedBox(width: 16),
             // Content
             Expanded(
               child: Column(
@@ -214,7 +228,7 @@ class ReviewsSheet extends ConsumerWidget {
                             height: 44,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFFFFDF95), // tertiary-fixed
+                              color: context.accentGold, // tertiary-fixed
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withAlpha(77),
@@ -222,7 +236,7 @@ class ReviewsSheet extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            child: const Icon(
+                            child: Icon(
                               PhosphorIconsFill.shieldCheck,
                               color: Color(0xFF251A00), // on-tertiary-fixed
                               size: 24,
@@ -232,21 +246,21 @@ class ReviewsSheet extends ConsumerWidget {
                             bottom: -2,
                             right: -2,
                             child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF131313),
+                              padding: EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: context.bgScreen,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 PhosphorIconsFill.sealCheck,
-                                color: Color(0xFF00FF7F), // primary-container
+                                color: context.accentMint, // primary-container
                                 size: 12,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -255,39 +269,41 @@ class ReviewsSheet extends ConsumerWidget {
                             style: GoogleFonts.manrope(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFFE5E2E1),
+                              color: context.textPrimary,
                             ),
                           ),
-                          const Text(
+                          Text(
                             'Clinical Nutritionist • 12m ago',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFFB9CBB8),
+                              color: context.textSecondary,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   // Body text
                   Text(
                     'The glycemic response for this profile is exceptionally stable. Pairing the high fiber content with the specific fat ratios ensures a sustained energy release without insulin spikes. Highly recommended for metabolic health.',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xFFE5E2E1).withAlpha(230), // on-surface/90
+                      color: context.textPrimary.withAlpha(
+                        230,
+                      ), // on-surface/90
                       height: 1.6,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   // Tags
                   Row(
                     children: [
-                      _buildTag('METABOLIC'),
-                      const SizedBox(width: 8),
-                      _buildTag('SCIENTIFIC'),
+                      _buildTag(context, 'METABOLIC'),
+                      SizedBox(width: 8),
+                      _buildTag(context, 'SCIENTIFIC'),
                     ],
                   ),
                 ],
@@ -300,7 +316,8 @@ class ReviewsSheet extends ConsumerWidget {
   }
 
   /// Regular community review card
-  Widget _buildCommunityCard({
+  Widget _buildCommunityCard(
+    BuildContext context, {
     String? avatarUrl,
     String? initials,
     required String role,
@@ -308,17 +325,20 @@ class ReviewsSheet extends ConsumerWidget {
     required String votes,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1B1B).withAlpha(102), // surface-container-low/40
+        color: context.bgCard.withAlpha(102), // surface-container-low/40
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withAlpha(13), width: 1.0), // white/5
+        border: Border.all(
+          color: Colors.white.withAlpha(13),
+          width: 1.0,
+        ), // white/5
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildVoteColumn(votes),
-          const SizedBox(width: 16),
+          _buildVoteColumn(context, votes),
+          SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +352,10 @@ class ReviewsSheet extends ConsumerWidget {
                         height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withAlpha(25), width: 1.0),
+                          border: Border.all(
+                            color: context.borderWhite10,
+                            width: 1.0,
+                          ),
                         ),
                         child: ClipOval(
                           child: ShimmerNetworkImage(imageUrl: avatarUrl),
@@ -343,17 +366,21 @@ class ReviewsSheet extends ConsumerWidget {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00BDFD).withAlpha(51), // secondary-container/20
+                          color: Color(
+                            0xFF00BDFD,
+                          ).withAlpha(51), // secondary-container/20
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: const Color(0xFF00BDFD).withAlpha(77), // secondary-container/30
+                            color: Color(
+                              0xFF00BDFD,
+                            ).withAlpha(77), // secondary-container/30
                             width: 1.0,
                           ),
                         ),
                         child: Center(
                           child: Text(
                             initials ?? '',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: Color(0xFF00BDFD),
@@ -361,23 +388,23 @@ class ReviewsSheet extends ConsumerWidget {
                           ),
                         ),
                       ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Text(
                       role,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFFB9CBB8),
+                        color: context.textSecondary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Text(
                   body,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Color(0xFFB9CBB8),
+                    color: context.textSecondary,
                     height: 1.6,
                   ),
                 ),
@@ -390,30 +417,34 @@ class ReviewsSheet extends ConsumerWidget {
   }
 
   /// Upvote/downvote column
-  Widget _buildVoteColumn(String count, {bool isExpert = false}) {
+  Widget _buildVoteColumn(
+    BuildContext context,
+    String count, {
+    bool isExpert = false,
+  }) {
     return SizedBox(
       width: 40,
       child: Column(
         children: [
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Icon(
             PhosphorIconsBold.caretUp,
-            color: const Color(0xFFB9CBB8),
+            color: context.textSecondary,
             size: 22,
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Text(
             count,
             style: TextStyle(
               fontSize: 12,
               fontWeight: isExpert ? FontWeight.w900 : FontWeight.bold,
-              color: const Color(0xFFE5E2E1),
+              color: context.textPrimary,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: 2),
           Icon(
             PhosphorIconsBold.caretDown,
-            color: const Color(0xFFB9CBB8),
+            color: context.textSecondary,
             size: 22,
           ),
         ],
@@ -422,9 +453,9 @@ class ReviewsSheet extends ConsumerWidget {
   }
 
   /// Tag pill
-  Widget _buildTag(String label) {
+  Widget _buildTag(BuildContext context, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.black.withAlpha(102), // black/40
         borderRadius: BorderRadius.circular(8),
@@ -432,10 +463,10 @@ class ReviewsSheet extends ConsumerWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: Color(0xFFB9CBB8),
+          color: context.textSecondary,
           letterSpacing: 1.0,
         ),
       ),
@@ -443,17 +474,17 @@ class ReviewsSheet extends ConsumerWidget {
   }
 
   /// Floating input bar at the bottom
-  Widget _buildInputBar() {
+  Widget _buildInputBar(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      padding: EdgeInsets.fromLTRB(24, 16, 24, 32),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF131313).withAlpha(0),
-            const Color(0xFF131313).withAlpha(230),
-            const Color(0xFF131313),
+            context.bgScreen.withAlpha(0),
+            context.bgScreen.withAlpha(230),
+            context.bgScreen,
           ],
         ),
       ),
@@ -462,33 +493,32 @@ class ReviewsSheet extends ConsumerWidget {
           // Text input
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
+                color: context.bgInput,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withAlpha(25), width: 1.0),
+                border: Border.all(color: context.borderWhite10, width: 1.0),
                 boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(127),
-                    blurRadius: 20,
-                  ),
+                  BoxShadow(color: Colors.black.withAlpha(127), blurRadius: 20),
                 ],
               ),
               child: Row(
                 children: [
                   Icon(
                     PhosphorIconsRegular.chatCircleDots,
-                    color: const Color(0xFFB9CBB8),
+                    color: context.textSecondary,
                     size: 18,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Write a review...',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFFB9CBB8).withAlpha(128), // on-surface-variant/50
+                        color: context.textSecondary.withAlpha(
+                          128,
+                        ), // on-surface-variant/50
                       ),
                     ),
                   ),
@@ -496,22 +526,24 @@ class ReviewsSheet extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           // Send button
           Container(
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFF00FF7F), // primary-container
+              color: context.accentMint, // primary-container
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00FF7F).withAlpha(51), // primary-container/20
+                  color: context.accentMint.withAlpha(
+                    51,
+                  ), // primary-container/20
                   blurRadius: 12,
                 ),
               ],
             ),
-            child: const Icon(
+            child: Icon(
               PhosphorIconsBold.arrowUp,
               color: Color(0xFF007134), // on-primary-container
               size: 20,

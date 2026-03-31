@@ -1,11 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:nutrinfo_app/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../theme/app_theme.dart';
 
 class MainShell extends StatelessWidget {
-  const MainShell({super.key, required this.navigationShell});
+  MainShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
   void _openScanner(BuildContext context) {
@@ -51,7 +52,9 @@ class MainShell extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppTheme.neonMint.withAlpha(51), // 20% opacity
+                            color: AppTheme.neonMint.withAlpha(
+                              51,
+                            ), // 20% opacity
                             blurRadius: 48, // blur-2xl
                             spreadRadius: 8,
                           ),
@@ -67,12 +70,17 @@ class MainShell extends StatelessWidget {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 24.0, sigmaY: 24.0),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
-                        constraints: const BoxConstraints(minWidth: 280),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 36,
+                          vertical: 14,
+                        ),
+                        constraints: BoxConstraints(minWidth: 280),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF121212).withAlpha(179), // 70% opacity
+                          color: Color(
+                            0xFF121212,
+                          ).withAlpha(179), // 70% opacity
                           border: Border.all(
-                            color: Colors.white.withAlpha(25), // ~10% white
+                            color: context.borderWhite10, // ~10% white
                             width: 1.0,
                           ),
                           borderRadius: BorderRadius.circular(9999),
@@ -84,7 +92,7 @@ class MainShell extends StatelessWidget {
                             // Home Tab
                             IconButton(
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
+                              constraints: BoxConstraints(),
                               icon: Icon(
                                 navigationShell.currentIndex == 0
                                     ? PhosphorIconsFill.squaresFour
@@ -98,16 +106,17 @@ class MainShell extends StatelessWidget {
                             ),
 
                             // Gap spanning under the center camera
-                            const SizedBox(width: 80),
+                            SizedBox(width: 80),
 
                             // History Tab
                             IconButton(
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
+                              constraints: BoxConstraints(),
                               icon: Icon(
                                 navigationShell.currentIndex == 1
                                     ? PhosphorIconsFill.clockCounterClockwise
-                                    : PhosphorIconsRegular.clockCounterClockwise,
+                                    : PhosphorIconsRegular
+                                          .clockCounterClockwise,
                                 size: 28,
                               ),
                               color: navigationShell.currentIndex == 1
@@ -133,27 +142,31 @@ class MainShell extends StatelessWidget {
                         height: 64,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             colors: [
-                              Color(0xFF00FF7F), // neonMint
-                              Color(0xFF00E471), // primary-fixed-dim (deep mint)
+                              context.accentMint, // neonMint
+                              Color(
+                                0xFF00E471,
+                              ), // primary-fixed-dim (deep mint)
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           border: Border.all(
-                            color: const Color(0xFF121212),
+                            color: Color(0xFF121212),
                             width: 4.0,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppTheme.neonMint.withAlpha(102), // 40% opacity
+                              color: AppTheme.neonMint.withAlpha(
+                                102,
+                              ), // 40% opacity
                               blurRadius: 25,
-                              offset: const Offset(0, 8),
+                              offset: Offset(0, 8),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           PhosphorIconsBold.camera,
                           color: Colors.black,
                           size: 28,

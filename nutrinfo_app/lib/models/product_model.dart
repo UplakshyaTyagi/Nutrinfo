@@ -20,7 +20,7 @@ class ProductModel {
   final DateTime lastFetchedAt;
   final List<ProductModel> healthySwaps;
 
-  const ProductModel({
+  ProductModel({
     required this.id,
     required this.name,
     required this.brand,
@@ -86,22 +86,32 @@ class ProductModel {
       offData: parseJsonStringMap(json['off_data_json']),
       hiddenAdditives: parseJsonStringList(json['hidden_additives_json']),
       allergens: parseJsonStringList(json['allergens_json']),
-      lastFetchedAt: DateTime.tryParse(json['last_fetched_at'] as String? ?? '') ?? DateTime.now(),
-      healthySwaps: swapsRaw.map((e) => ProductModel.fromJson(e as Map<String, dynamic>)).toList(),
+      lastFetchedAt:
+          DateTime.tryParse(json['last_fetched_at'] as String? ?? '') ??
+          DateTime.now(),
+      healthySwaps: swapsRaw
+          .map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
   /// Nutrient helpers parsed from off_data
   double get protein => (offData['protein'] as num?)?.toDouble() ?? 0.0;
-  double get carbs => (offData['carbohydrates'] as num?)?.toDouble() ??
-      (offData['energy_kcal'] as num?)?.toDouble() ?? 0.0;
-  double get fats => (offData['fat'] as num?)?.toDouble() ??
-      (offData['sat_fat'] as num?)?.toDouble() ?? 0.0;
+  double get carbs =>
+      (offData['carbohydrates'] as num?)?.toDouble() ??
+      (offData['energy_kcal'] as num?)?.toDouble() ??
+      0.0;
+  double get fats =>
+      (offData['fat'] as num?)?.toDouble() ??
+      (offData['sat_fat'] as num?)?.toDouble() ??
+      0.0;
   double get sugars => (offData['sugars'] as num?)?.toDouble() ?? 0.0;
   double get sodium => (offData['sodium'] as num?)?.toDouble() ?? 0.0;
   double get fiber => (offData['fiber'] as num?)?.toDouble() ?? 0.0;
-  double get calories => (offData['energy_kcal'] as num?)?.toDouble() ??
-      (offData['calories_100g'] as num?)?.toDouble() ?? 0.0;
+  double get calories =>
+      (offData['energy_kcal'] as num?)?.toDouble() ??
+      (offData['calories_100g'] as num?)?.toDouble() ??
+      0.0;
 
   /// Map score to display color category
   bool get isHealthy => finalScore >= 6.0;

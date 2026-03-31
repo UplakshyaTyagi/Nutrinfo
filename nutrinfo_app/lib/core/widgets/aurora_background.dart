@@ -4,20 +4,23 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 
 class AuroraBackground extends StatefulWidget {
-  const AuroraBackground({super.key});
+  AuroraBackground({super.key});
 
   @override
   State<AuroraBackground> createState() => _AuroraBackgroundState();
 }
 
-class _AuroraBackgroundState extends State<AuroraBackground> with SingleTickerProviderStateMixin {
+class _AuroraBackgroundState extends State<AuroraBackground>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-        vsync: this, duration: const Duration(seconds: 15))..repeat();
+      vsync: this,
+      duration: Duration(seconds: 15),
+    )..repeat();
   }
 
   @override
@@ -32,7 +35,7 @@ class _AuroraBackgroundState extends State<AuroraBackground> with SingleTickerPr
       animation: _controller,
       builder: (context, child) {
         final t = _controller.value * 2 * pi;
-        
+
         return Stack(
           children: [
             // Blob 1: Mint overlapping top left
@@ -64,10 +67,7 @@ class _AuroraBackgroundState extends State<AuroraBackground> with SingleTickerPr
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   } // Removed BackdropFilter here because we do one massive layer blur above it
 }

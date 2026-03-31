@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../providers/product_provider.dart';
+import '../../core/utils/dynamic_icon_mapper.dart';
+import '../../theme/app_colors.dart';
 
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   String _greeting() {
     final hour = DateTime.now().hour;
@@ -19,23 +21,27 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: const Color(0xFF131313),
+      backgroundColor: context.bgScreen,
       body: Column(
         children: [
           _buildHeader(context),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.only(
-                  top: 0, bottom: 120, left: 24, right: 24),
+              padding: EdgeInsets.only(
+                top: 0,
+                bottom: 120,
+                left: 24,
+                right: 24,
+              ),
               children: [
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 _buildHeroWelcome(context),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 _buildScanCTA(context),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
                 _buildQuickActionsRow(context),
-                const SizedBox(height: 40),
-                _buildTrendingSwapsSection(),
+                SizedBox(height: 40),
+                _buildTrendingSwapsSection(context, ref),
               ],
             ),
           ),
@@ -47,12 +53,12 @@ class HomeScreen extends ConsumerWidget {
   Widget _buildHeader(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0A0A0A).withAlpha(204),
+        color: context.bgHeader.withAlpha(204),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(102),
             blurRadius: 20,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -62,22 +68,24 @@ class HomeScreen extends ConsumerWidget {
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Nutrinfo. branding
                   Row(
                     children: [
-                      Image.asset('assets/images/logo.png',
-                          width: 32, height: 32,
-                          errorBuilder: (_, __, ___) => const Icon(
-                                PhosphorIconsFill.leaf,
-                                color: Color(0xFF00FF7F),
-                                size: 28,
-                              )),
-                      const SizedBox(width: 10),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 32,
+                        height: 32,
+                        errorBuilder: (_, __, ___) => Icon(
+                          PhosphorIconsFill.leaf,
+                          color: context.accentMint,
+                          size: 28,
+                        ),
+                      ),
+                      SizedBox(width: 10),
                       RichText(
                         text: TextSpan(
                           style: GoogleFonts.manrope(
@@ -86,11 +94,11 @@ class HomeScreen extends ConsumerWidget {
                             color: Colors.white,
                             letterSpacing: -0.5,
                           ),
-                          children: const [
+                          children: [
                             TextSpan(text: 'Nutrinfo'),
                             TextSpan(
                               text: '.',
-                              style: TextStyle(color: Color(0xFF00FF7F)),
+                              style: TextStyle(color: context.accentMint),
                             ),
                           ],
                         ),
@@ -111,33 +119,37 @@ class HomeScreen extends ConsumerWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A).withAlpha(150),
+                            color: context.bgInput.withAlpha(150),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: Colors.white.withAlpha(20), width: 1),
+                              color: context.borderWhite10,
+                              width: 1,
+                            ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             PhosphorIconsRegular.magnifyingGlass,
-                            color: Color(0xFFB9CBB8),
+                            color: context.textSecondary,
                             size: 20,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       GestureDetector(
                         onTap: () => context.push('/settings'),
                         child: Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A).withAlpha(150),
+                            color: context.bgInput.withAlpha(150),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                                color: Colors.white.withAlpha(20), width: 1),
+                              color: context.borderWhite10,
+                              width: 1,
+                            ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             PhosphorIconsRegular.gearSix,
-                            color: Color(0xFFB9CBB8),
+                            color: context.textSecondary,
                             size: 20,
                           ),
                         ),
@@ -162,17 +174,17 @@ class HomeScreen extends ConsumerWidget {
           style: GoogleFonts.manrope(
             fontSize: 48,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFFE5E2E1),
+            color: context.textPrimary,
             height: 1.05,
             letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
+        SizedBox(height: 8),
+        Text(
           'Scan something to discover\nwhat\'s really inside.',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFFB9CBB8),
+            color: context.textSecondary,
             height: 1.4,
           ),
         ),
@@ -188,17 +200,17 @@ class HomeScreen extends ConsumerWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 24.0, sigmaY: 24.0),
           child: Container(
-            padding: const EdgeInsets.all(36),
+            padding: EdgeInsets.all(36),
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A).withAlpha(102),
+              color: context.bgInput.withAlpha(102),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: const Color(0xFF00FF7F).withAlpha(25),
+                color: context.accentMint.withAlpha(25),
                 width: 1.0,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00FF7F).withAlpha(13),
+                  color: context.accentMint.withAlpha(13),
                   blurRadius: 40,
                   spreadRadius: -5,
                 ),
@@ -210,11 +222,11 @@ class HomeScreen extends ConsumerWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00FF7F).withAlpha(25),
+                    color: context.accentMint.withAlpha(25),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF00FF7F).withAlpha(38),
+                        color: context.accentMint.withAlpha(38),
                         blurRadius: 30,
                         spreadRadius: -5,
                       ),
@@ -222,27 +234,27 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   child: Icon(
                     PhosphorIconsFill.scan,
-                    color: const Color(0xFF00FF7F),
+                    color: context.accentMint,
                     size: 36,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 Text(
                   'Scan a Product',
                   style: GoogleFonts.manrope(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFFE5E2E1),
+                    color: context.textPrimary,
                     letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: 8),
+                Text(
                   'Tap to open camera and analyze\nany food product instantly',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Color(0xFFB9CBB8),
+                    color: context.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -259,32 +271,32 @@ class HomeScreen extends ConsumerWidget {
       children: [
         Expanded(
           child: _buildQuickAction(
+            context,
             icon: PhosphorIconsRegular.clockCounterClockwise,
             label: 'History',
-            color: const Color(0xFF00BFFF),
+            color: context.accentCyan,
             onTap: () => context.go('/history'),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: _buildQuickAction(
+            context,
             icon: PhosphorIconsRegular.magnifyingGlass,
             label: 'Search',
-            color: const Color(0xFF00FF7F),
+            color: context.accentMint,
             onTap: () {
-              showSearch(
-                context: context,
-                delegate: _ProductSearchDelegate(),
-              );
+              showSearch(context: context, delegate: _ProductSearchDelegate());
             },
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12),
         Expanded(
           child: _buildQuickAction(
+            context,
             icon: PhosphorIconsRegular.chatCircleDots,
             label: 'Reviews',
-            color: const Color(0xFFFFDF95),
+            color: context.accentGold,
             onTap: () => context.push('/reviews'),
           ),
         ),
@@ -292,7 +304,8 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQuickAction({
+  Widget _buildQuickAction(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required Color color,
@@ -305,16 +318,16 @@ class HomeScreen extends ConsumerWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A).withAlpha(102),
+              color: context.bgInput.withAlpha(102),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: color.withAlpha(25), width: 1.0),
             ),
             child: Column(
               children: [
                 Icon(icon, color: color, size: 28),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   label,
                   style: GoogleFonts.manrope(
@@ -331,7 +344,9 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTrendingSwapsSection() {
+  Widget _buildTrendingSwapsSection(BuildContext context, WidgetRef ref) {
+    final trendingAsync = ref.watch(trendingProductsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -343,103 +358,144 @@ class HomeScreen extends ConsumerWidget {
               style: GoogleFonts.manrope(
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFFE5E2E1),
+                color: context.textPrimary,
               ),
             ),
-            const Text(
+            Text(
               'CURATED\nFOR YOU',
               textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFB9CBB8),
+                color: context.textSecondary,
                 letterSpacing: 2.0,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 24),
-        _buildSwapCard(
-            name: 'Greek Yogurt', category: 'Dairy · High Protein', score: 8.8),
-        const SizedBox(height: 12),
-        _buildSwapCard(
-            name: 'Overnight Oats', category: 'Grains · Fiber Rich', score: 8.2),
-        const SizedBox(height: 12),
-        _buildSwapCard(
-            name: 'Mixed Berries Bowl',
-            category: 'Fruits · Antioxidants',
-            score: 9.1),
+        SizedBox(height: 24),
+        trendingAsync.when(
+          data: (products) {
+            if (products.isEmpty) {
+              return Text(
+                'No trending products available.',
+                style: TextStyle(color: context.textSecondary),
+              );
+            }
+            return Column(
+              children: products.map((p) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 12.0),
+                  child: _buildSwapCard(
+                    context: context,
+                    id: p['id'].toString(),
+                    name: p['product_name'] ?? 'Unknown Item',
+                    category: p['health_category'] ?? 'Eatable',
+                    score: (p['health_score'] as num?)?.toDouble() ?? 5.0,
+                  ),
+                );
+              }).toList(),
+            );
+          },
+          loading: () => Center(
+            child: CircularProgressIndicator(color: context.accentMint),
+          ),
+          error: (error, stack) => Text(
+            'Error loading top swaps: $error',
+            style: TextStyle(color: Colors.redAccent),
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildSwapCard({
+    required BuildContext context,
+    required String id,
     required String name,
     required String category,
     required double score,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1C1B1B),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(77),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: const Color(0xFF353534),
-              borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => context.push('/product-detail/$id'),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: context.bgCard,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(77),
+              blurRadius: 20,
+              offset: Offset(0, 4),
             ),
-            child: const Icon(PhosphorIconsRegular.forkKnife,
-                color: Color(0xFFB9CBB8), size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: GoogleFonts.manrope(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFE5E2E1))),
-                const SizedBox(height: 2),
-                Text(category,
-                    style:
-                        const TextStyle(fontSize: 13, color: Color(0xFFB9CBB8))),
-              ],
-            ),
-          ),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: const Color(0xFF00FF7F).withAlpha(51),
-              shape: BoxShape.circle,
-              border: Border.all(
-                  color: const Color(0xFF00FF7F).withAlpha(77), width: 1.0),
-            ),
-            child: Center(
-              child: Text(
-                score.toStringAsFixed(1),
-                style: GoogleFonts.manrope(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF00FF7F)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: context.bgInput,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                DynamicIconMapper.getIconForProduct(name),
+                color: context.textSecondary,
+                size: 24,
               ),
             ),
-          ),
-        ],
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.manrope(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: context.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    category,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: context.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: context.accentMint.withAlpha(51),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: context.accentMint.withAlpha(77),
+                  width: 1.0,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  score.toStringAsFixed(1),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: context.accentMint,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -454,15 +510,15 @@ class _ProductSearchDelegate extends SearchDelegate<String> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
-      appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF131313), elevation: 0),
-      scaffoldBackgroundColor: const Color(0xFF131313),
-      inputDecorationTheme: const InputDecorationTheme(
-        hintStyle: TextStyle(color: Color(0xFFB9CBB8)),
+      appBarTheme: AppBarTheme(backgroundColor: context.bgScreen, elevation: 0),
+      scaffoldBackgroundColor: context.bgScreen,
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: context.textSecondary),
         border: InputBorder.none,
       ),
-      textTheme:
-          const TextTheme(titleLarge: TextStyle(color: Colors.white, fontSize: 16)),
+      textTheme: TextTheme(
+        titleLarge: TextStyle(color: Colors.white, fontSize: 16),
+      ),
     );
   }
 
@@ -471,7 +527,7 @@ class _ProductSearchDelegate extends SearchDelegate<String> {
     return [
       if (query.isNotEmpty)
         IconButton(
-          icon: const Icon(Icons.clear, color: Color(0xFFB9CBB8)),
+          icon: Icon(Icons.clear, color: context.textSecondary),
           onPressed: () => query = '',
         ),
     ];
@@ -480,36 +536,44 @@ class _ProductSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.arrow_back, color: Color(0xFF00FF7F)),
+      icon: Icon(Icons.arrow_back, color: context.accentMint),
       onPressed: () => close(context, ''),
     );
   }
 
   @override
-  Widget buildResults(BuildContext context) =>
-      _SearchResults(query: query);
+  Widget buildResults(BuildContext context) => _SearchResults(query: query);
 
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.length < 2) {
       return Container(
-        color: const Color(0xFF131313),
+        color: context.bgScreen,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(PhosphorIconsRegular.magnifyingGlass,
-                  color: const Color(0xFFB9CBB8).withAlpha(100), size: 48),
-              const SizedBox(height: 16),
-              Text('Search for any food product',
-                  style: TextStyle(
-                      color: const Color(0xFFB9CBB8).withAlpha(150),
-                      fontSize: 16)),
-              const SizedBox(height: 4),
-              Text('e.g. "Chocolate", "Green Tea", "Yogurt"',
-                  style: TextStyle(
-                      color: const Color(0xFFB9CBB8).withAlpha(100),
-                      fontSize: 13)),
+              Icon(
+                PhosphorIconsRegular.magnifyingGlass,
+                color: context.textSecondary.withAlpha(100),
+                size: 48,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Search for any food product',
+                style: TextStyle(
+                  color: context.textSecondary.withAlpha(150),
+                  fontSize: 16,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'e.g. "Chocolate", "Green Tea", "Yogurt"',
+                style: TextStyle(
+                  color: context.textSecondary.withAlpha(100),
+                  fontSize: 13,
+                ),
+              ),
             ],
           ),
         ),
@@ -528,21 +592,27 @@ class _SearchResults extends ConsumerWidget {
     final resultsAsync = ref.watch(productSearchProvider(query));
 
     return Container(
-      color: const Color(0xFF131313),
+      color: context.bgScreen,
       child: resultsAsync.when(
-        loading: () => const Center(
-            child: CircularProgressIndicator(color: Color(0xFF00FF7F))),
+        loading: () =>
+            Center(child: CircularProgressIndicator(color: context.accentMint)),
         error: (err, _) => Center(
-            child: Text('Error: $err',
-                style: const TextStyle(color: Color(0xFFB9CBB8)))),
+          child: Text(
+            'Error: $err',
+            style: TextStyle(color: context.textSecondary),
+          ),
+        ),
         data: (products) {
           if (products.isEmpty) {
             return Center(
-                child: Text('No products found for "$query"',
-                    style: const TextStyle(color: Color(0xFFB9CBB8))));
+              child: Text(
+                'No products found for "$query"',
+                style: TextStyle(color: context.textSecondary),
+              ),
+            );
           }
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: products.length,
             itemBuilder: (context, index) =>
                 _buildResultCard(context, products[index]),
@@ -559,18 +629,18 @@ class _SearchResults extends ConsumerWidget {
     final id = product['id'] as int? ?? 0;
 
     final scoreColor = score >= 7.0
-        ? const Color(0xFF00FF7F)
+        ? context.accentMint
         : score >= 4.5
-            ? const Color(0xFF00BFFF)
-            : const Color(0xFFFF5252);
+        ? context.accentCyan
+        : Color(0xFFFF5252);
 
     return GestureDetector(
       onTap: () => context.push('/product-detail/$id'),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1C1B1B),
+          color: context.bgCard,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -579,29 +649,38 @@ class _SearchResults extends ConsumerWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: const Color(0xFF353534),
+                color: context.bgInput,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(PhosphorIconsRegular.forkKnife,
-                  color: Color(0xFFB9CBB8), size: 24),
+              child: Icon(
+                PhosphorIconsRegular.forkKnife,
+                color: context.textSecondary,
+                size: 24,
+              ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name,
-                      style: GoogleFonts.manrope(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFFE5E2E1)),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
+                  Text(
+                    name,
+                    style: GoogleFonts.manrope(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: context.textPrimary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   if (category.isNotEmpty)
-                    Text(category,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: scoreColor.withAlpha(180))),
+                    Text(
+                      category,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: scoreColor.withAlpha(180),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -611,15 +690,17 @@ class _SearchResults extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: scoreColor.withAlpha(51),
                 shape: BoxShape.circle,
-                border:
-                    Border.all(color: scoreColor.withAlpha(77), width: 1.0),
+                border: Border.all(color: scoreColor.withAlpha(77), width: 1.0),
               ),
               child: Center(
-                child: Text(score.toStringAsFixed(1),
-                    style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: scoreColor)),
+                child: Text(
+                  score.toStringAsFixed(1),
+                  style: GoogleFonts.manrope(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: scoreColor,
+                  ),
+                ),
               ),
             ),
           ],

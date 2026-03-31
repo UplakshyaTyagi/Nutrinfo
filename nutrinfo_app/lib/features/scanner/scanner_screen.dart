@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:nutrinfo_app/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,7 +10,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../providers/auth_provider.dart';
 
 class ScannerScreen extends ConsumerStatefulWidget {
-  const ScannerScreen({super.key});
+  ScannerScreen({super.key});
 
   @override
   ConsumerState<ScannerScreen> createState() => _ScannerScreenState();
@@ -23,8 +24,9 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
   List<Map<String, dynamic>> _foundProducts = [];
   bool _showResults = false;
 
-  final TextRecognizer _textRecognizer =
-      TextRecognizer(script: TextRecognitionScript.latin);
+  final TextRecognizer _textRecognizer = TextRecognizer(
+    script: TextRecognitionScript.latin,
+  );
 
   @override
   void initState() {
@@ -112,8 +114,8 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
       final result = await api.scanByName(searchQuery);
 
       if (result['found'] == true && result['products'] != null) {
-        final products =
-            (result['products'] as List).cast<Map<String, dynamic>>();
+        final products = (result['products'] as List)
+            .cast<Map<String, dynamic>>();
         setState(() {
           _foundProducts = products;
           _showResults = true;
@@ -123,7 +125,8 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
         setState(() {
           _isProcessing = false;
           _statusMessage =
-              result['message'] ?? 'Product nutrition info has not been updated yet.';
+              result['message'] ??
+              'Product nutrition info has not been updated yet.';
           _showResults = false;
         });
       }
@@ -169,7 +172,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     Colors.transparent,
                     Colors.black.withAlpha(220),
                   ],
-                  stops: const [0.0, 0.2, 0.6, 1.0],
+                  stops: [0.0, 0.2, 0.6, 1.0],
                 ),
               ),
             ),
@@ -184,7 +187,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF00FF7F).withAlpha(150),
+                    color: context.accentMint.withAlpha(150),
                     width: 2,
                   ),
                 ),
@@ -201,16 +204,16 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                             _isProcessing
                                 ? PhosphorIconsFill.circleNotch
                                 : PhosphorIconsFill.textT,
-                            color: const Color(0xFF00FF7F),
+                            color: context.accentMint,
                             size: 36,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8),
                           Text(
                             _isProcessing ? 'Analyzing...' : 'Product Label',
                             style: GoogleFonts.manrope(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF00FF7F),
+                              color: context.accentMint,
                             ),
                           ),
                         ],
@@ -228,8 +231,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 12.0),
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -242,8 +244,11 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                           color: Colors.black.withAlpha(120),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.arrow_back,
-                            color: Colors.white, size: 20),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                     Text(
@@ -255,7 +260,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                         letterSpacing: 2.0,
                       ),
                     ),
-                    const SizedBox(width: 40),
+                    SizedBox(width: 40),
                   ],
                 ),
               ),
@@ -267,9 +272,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: _showResults
-                ? _buildResultsPanel()
-                : _buildCapturePanel(),
+            child: _showResults ? _buildResultsPanel() : _buildCapturePanel(),
           ),
         ],
       ),
@@ -278,18 +281,19 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
 
   Widget _buildCapturePanel() {
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A).withAlpha(220),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            color: Color(0xFF1A1A1A).withAlpha(220),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             border: Border(
               top: BorderSide(
-                  color: const Color(0xFF00FF7F).withAlpha(30), width: 1),
+                color: context.accentMint.withAlpha(30),
+                width: 1,
+              ),
             ),
           ),
           child: Column(
@@ -300,11 +304,11 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.manrope(
                   fontSize: 14,
-                  color: const Color(0xFFB9CBB8),
+                  color: context.textSecondary,
                   height: 1.4,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
               // Capture button
               GestureDetector(
                 onTap: _isProcessing ? null : _captureAndRecognize,
@@ -314,37 +318,42 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _isProcessing
-                        ? const Color(0xFF333333)
-                        : const Color(0xFF00FF7F),
+                        ? Color(0xFF333333)
+                        : context.accentMint,
                     boxShadow: _isProcessing
                         ? []
                         : [
                             BoxShadow(
-                              color: const Color(0xFF00FF7F).withAlpha(80),
+                              color: context.accentMint.withAlpha(80),
                               blurRadius: 24,
                               spreadRadius: -4,
                             ),
                           ],
                   ),
                   child: _isProcessing
-                      ? const Padding(
+                      ? Padding(
                           padding: EdgeInsets.all(20),
                           child: CircularProgressIndicator(
-                              color: Color(0xFF00FF7F), strokeWidth: 3),
+                            color: context.accentMint,
+                            strokeWidth: 3,
+                          ),
                         )
-                      : const Icon(PhosphorIconsFill.camera,
-                          color: Colors.black, size: 32),
+                      : Icon(
+                          PhosphorIconsFill.camera,
+                          color: Colors.black,
+                          size: 32,
+                        ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 _isProcessing ? 'Reading...' : 'Tap to scan',
                 style: GoogleFonts.manrope(
                   fontSize: 12,
-                  color: const Color(0xFFB9CBB8),
+                  color: context.textSecondary,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
             ],
           ),
         ),
@@ -354,16 +363,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
 
   Widget _buildResultsPanel() {
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
         child: Container(
-          constraints:
-              BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
-          padding: const EdgeInsets.all(24),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.5,
+          ),
+          padding: EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A).withAlpha(240),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            color: Color(0xFF1A1A1A).withAlpha(240),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -377,7 +387,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -386,7 +396,7 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     style: GoogleFonts.manrope(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF00FF7F),
+                      color: context.accentMint,
                     ),
                   ),
                   GestureDetector(
@@ -397,15 +407,17 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                         _statusMessage = 'Point camera at a product label';
                       });
                     },
-                    child: const Text(
+                    child: Text(
                       'Scan Again',
                       style: TextStyle(
-                          color: Color(0xFFB9CBB8), fontSize: 14),
+                        color: context.textSecondary,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -417,18 +429,18 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                     final name = p['product_name'] as String? ?? 'Unknown';
                     final id = p['id'] as int? ?? 0;
                     final scoreColor = score >= 7
-                        ? const Color(0xFF00FF7F)
+                        ? context.accentMint
                         : score >= 4.5
-                            ? const Color(0xFF00BFFF)
-                            : const Color(0xFFFF5252);
+                        ? context.accentCyan
+                        : Color(0xFFFF5252);
 
                     return GestureDetector(
                       onTap: () => context.push('/product-detail/$id'),
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(14),
+                        margin: EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF242424),
+                          color: Color(0xFF242424),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
@@ -437,28 +449,29 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF353534),
+                                color: context.bgInput,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(
-                                  PhosphorIconsRegular.forkKnife,
-                                  color: Color(0xFFB9CBB8),
-                                  size: 20),
+                              child: Icon(
+                                PhosphorIconsRegular.forkKnife,
+                                color: context.textSecondary,
+                                size: 20,
+                              ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 name,
                                 style: GoogleFonts.manrope(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFE5E2E1),
+                                  color: context.textPrimary,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 8),
                             Container(
                               width: 40,
                               height: 40,
@@ -466,7 +479,9 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
                                 color: scoreColor.withAlpha(40),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                    color: scoreColor.withAlpha(80), width: 1),
+                                  color: scoreColor.withAlpha(80),
+                                  width: 1,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
@@ -495,60 +510,68 @@ class _ScannerScreenState extends ConsumerState<ScannerScreen> {
 
   List<Widget> _buildCornerAccents() {
     const cornerSize = 24.0;
-    const color = Color(0xFF00FF7F);
+    final color = context.accentMint;
     return [
       Positioned(
-          top: 0,
-          left: 0,
-          child: Container(
-              width: cornerSize,
-              height: cornerSize,
-              decoration: const BoxDecoration(
-                border: Border(
-                    top: BorderSide(color: color, width: 3),
-                    left: BorderSide(color: color, width: 3)),
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(16)),
-              ))),
+        top: 0,
+        left: 0,
+        child: Container(
+          width: cornerSize,
+          height: cornerSize,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: color, width: 3),
+              left: BorderSide(color: color, width: 3),
+            ),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(16)),
+          ),
+        ),
+      ),
       Positioned(
-          top: 0,
-          right: 0,
-          child: Container(
-              width: cornerSize,
-              height: cornerSize,
-              decoration: const BoxDecoration(
-                border: Border(
-                    top: BorderSide(color: color, width: 3),
-                    right: BorderSide(color: color, width: 3)),
-                borderRadius:
-                    BorderRadius.only(topRight: Radius.circular(16)),
-              ))),
+        top: 0,
+        right: 0,
+        child: Container(
+          width: cornerSize,
+          height: cornerSize,
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: color, width: 3),
+              right: BorderSide(color: color, width: 3),
+            ),
+            borderRadius: BorderRadius.only(topRight: Radius.circular(16)),
+          ),
+        ),
+      ),
       Positioned(
-          bottom: 0,
-          left: 0,
-          child: Container(
-              width: cornerSize,
-              height: cornerSize,
-              decoration: const BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: color, width: 3),
-                    left: BorderSide(color: color, width: 3)),
-                borderRadius:
-                    BorderRadius.only(bottomLeft: Radius.circular(16)),
-              ))),
+        bottom: 0,
+        left: 0,
+        child: Container(
+          width: cornerSize,
+          height: cornerSize,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: color, width: 3),
+              left: BorderSide(color: color, width: 3),
+            ),
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16)),
+          ),
+        ),
+      ),
       Positioned(
-          bottom: 0,
-          right: 0,
-          child: Container(
-              width: cornerSize,
-              height: cornerSize,
-              decoration: const BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(color: color, width: 3),
-                    right: BorderSide(color: color, width: 3)),
-                borderRadius:
-                    BorderRadius.only(bottomRight: Radius.circular(16)),
-              ))),
+        bottom: 0,
+        right: 0,
+        child: Container(
+          width: cornerSize,
+          height: cornerSize,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: color, width: 3),
+              right: BorderSide(color: color, width: 3),
+            ),
+            borderRadius: BorderRadius.only(bottomRight: Radius.circular(16)),
+          ),
+        ),
+      ),
     ];
   }
 }

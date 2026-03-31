@@ -6,7 +6,7 @@ class ReviewModel {
   final String body;
   final DateTime createdAt;
 
-  const ReviewModel({
+  ReviewModel({
     required this.id,
     required this.userId,
     required this.productId,
@@ -22,7 +22,9 @@ class ReviewModel {
       productId: json['product_id'] as String? ?? '',
       rating: (json['rating'] as num?)?.toInt() ?? 3,
       body: json['body'] as String? ?? '',
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['created_at'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 }

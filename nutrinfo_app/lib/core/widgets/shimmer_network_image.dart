@@ -5,7 +5,7 @@ class ShimmerNetworkImage extends StatelessWidget {
   final String imageUrl;
   final BoxFit fit;
 
-  const ShimmerNetworkImage({
+  ShimmerNetworkImage({
     super.key,
     required this.imageUrl,
     this.fit = BoxFit.cover,
@@ -26,7 +26,7 @@ class ShimmerNetworkImage extends StatelessWidget {
       },
       errorBuilder: (context, error, stackTrace) => Container(
         color: Colors.grey[900],
-        child: const Icon(Icons.error_outline, color: Colors.white54),
+        child: Icon(Icons.error_outline, color: Colors.white54),
       ),
     );
   }
